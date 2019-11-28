@@ -79,3 +79,4 @@
     (paths/real-path wd) => truthy))
 
 
+;; TODO: test watch service registration.
