@@ -114,6 +114,10 @@
   (-to-n-path [this more]))
 
 
+(defn- path? [x] (isa? x Path))
+
+(declare path)
+
 (extend-protocol UnaryPathBuilder
   Path
   (-to-u-path [this] this)
@@ -132,15 +136,15 @@
 
   Sequential
   (-to-u-path [this]
-    (assert (every? string? this)
-            "Can convert to paths only sequential collections of Strings.")
-    (let [[f & r] this]
-      (if r
-        (-to-n-path f r)
-        (-to-u-path f)))))
+    (let [sanitized (into [] (comp (map -to-u-path) (map str)) this)]
+      (apply path sanitized))))
 
 
 (extend-protocol NaryPathBuilder
+  Path
+  (-to-n-path [this more]
+    (.resolve ^Path this (str (-to-u-path more))))
+
   String
   (-to-n-path [this more]
     (assert (every? string? more))

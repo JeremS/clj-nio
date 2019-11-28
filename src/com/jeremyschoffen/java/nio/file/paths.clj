@@ -1,5 +1,5 @@
 (ns com.jeremyschoffen.java.nio.file.paths
-  (:refer-clojure :exclude [resolve])
+  (:refer-clojure :exclude [resolve name])
   (:require
     [com.jeremyschoffen.java.nio.internal :as i])
   (:import
@@ -19,11 +19,11 @@
   Boolean .endsWith)
 
 
-(i/def-path-fn file-name
+(i/def-path-fn name
   "Returns the name of the file or directory denoted by the path."
   Path .getFileName)
 
-
+;; TODO: Passing just a uri doesn't work
 (i/defn-wn file-system
   "Returns the FileSystem located at the URI, the FileSystem used to
   create the Path, or the default FileSystem when called with no
@@ -68,7 +68,7 @@
   Path .relativize)
 
 
-(i/def-binary-path-fn resolve-path
+(i/def-binary-path-fn resolve
   "Resolves the other against the path."
   Path .resolve)
 
