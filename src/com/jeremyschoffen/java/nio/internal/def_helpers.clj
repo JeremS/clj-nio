@@ -318,7 +318,7 @@
   [& args]
   (-> args
       (->> (params->ctxt ::def-method-on))
-      (method-on-pass nil false)
+      (method-on-pass `coerce/file-store false)
       compile-java-call))
 
 
