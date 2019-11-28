@@ -30,6 +30,7 @@
 (alias-fn dir-stream-filter coerce/dir-stream-filter)
 (alias-fn file coerce/file)
 (alias-fn file-attribute-array coerce/file-attribute-array)
+(alias-fn file-store coerce/file-store)
 (alias-fn file-system coerce/file-system)
 (alias-fn file-time coerce/file-time)
 (alias-fn file-visit-option coerce/file-visit-option)

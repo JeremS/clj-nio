@@ -8,7 +8,7 @@
     (java.lang ClassLoader)
     (java.net URI URL)
     (java.nio.charset Charset StandardCharsets)
-    (java.nio.file FileSystems FileSystem
+    (java.nio.file FileSystems FileSystem FileStore
                    Paths Path
                    DirectoryStream$Filter
                    CopyOption StandardCopyOption
@@ -296,7 +296,6 @@
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; FileTime
 ;;----------------------------------------------------------------------------------------------------------------------
-
 (defprotocol FileTimeBuilder
   (-to-file-time [this]))
 
@@ -319,6 +318,17 @@
 
 (def-u-coercion file-time FileTime -to-file-time)
 
+;;----------------------------------------------------------------------------------------------------------------------
+;; FileStore
+;;----------------------------------------------------------------------------------------------------------------------
+(defprotocol FileStoreBuilder
+  (-to-file-store [this]))
+
+(extend-protocol FileStoreBuilder
+  FileStore
+  (-to-file-store [this] this))
+
+(def-u-coercion file-store FileStore -to-file-store)
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Keyword coercion helpers
 ;;----------------------------------------------------------------------------------------------------------------------
