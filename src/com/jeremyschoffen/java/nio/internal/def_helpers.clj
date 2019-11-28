@@ -257,8 +257,9 @@
 (defn- method-on-pass [ctxt this-coercion arity-0]
   (-> ctxt
       (assoc :inject-this true
-             :this-coercion this-coercion
              :arity-0 arity-0)
+      (cond-> this-coercion
+              (assoc :this-coercion this-coercion))
       compute-method-on-arity))
 
 
@@ -279,7 +280,7 @@
 
 
 (defmacro def-path-fn
-  "Define a java method call defined with `def-java-call`.
+  "Define function an a path.
   :inject-this is true, :this-coercion is set to `coercions/path`
 
   opts:
@@ -294,7 +295,7 @@
 
 
 (defmacro def-fs-fn
-  "Define a function o a file system defined with `def-java-call`.
+  "Define a function on a file system with `def-java-call`.
   :inject-this is true, :this-coercion is set to `coercions/file-system`
 
   opts:
@@ -304,6 +305,20 @@
   (-> args
       (->> (params->ctxt ::def-method-on))
       (method-on-pass `coerce/file-system false)
+      compile-java-call))
+
+
+(defmacro def-file-store-fn
+  "Define a function on a file store with `def-java-call`.
+  :inject-this is true.`
+
+  opts:
+  - `:additional-params` : ex :[x y z]
+  - `:coercions` : ex {x path y fs}"
+  [& args]
+  (-> args
+      (->> (params->ctxt ::def-method-on))
+      (method-on-pass nil false)
       compile-java-call))
 
 
@@ -347,7 +362,7 @@
 
 
 (defmacro def-create-fn
-  "Defines a create function of a path and file attributes."
+  "Defines a create function of a path and variadic file attributes."
   [& args]
   (-> args
       (->> (params->ctxt ::def-method-on))

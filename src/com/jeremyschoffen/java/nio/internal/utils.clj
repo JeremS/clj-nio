@@ -5,27 +5,6 @@
     (java.lang AutoCloseable)))
 
 
-(defmacro alias-fn
-  ([aliased]
-   (list `alias-fn nil aliased))
-  ([alias-name aliased]
-   (let [resolved (resolve aliased)
-         {resolved-name :name
-          :as resolved-meta} (meta resolved)
-
-         aliased-name (symbol resolved)
-         alias-name   (or alias-name resolved-name)
-
-         {doc :doc :or {doc ""}
-          :as alias-meta} (dissoc resolved-meta :line :column :file :name :ns)
-
-         alias-meta (update alias-meta :doc #(str (format "Alias for: `%s` \n\n  " aliased-name) %))]
-     `(do
-        (def ~alias-name ~aliased-name)
-        (alter-meta! (var ~alias-name) #(merge '~alias-meta %))
-        (var ~alias-name)))))
-
-
 (defn- make-return-type-notice [metadata-map]
   (when-let [type (:return-type metadata-map
                     (:tag metadata-map))]
