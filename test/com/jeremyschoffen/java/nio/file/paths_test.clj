@@ -50,7 +50,7 @@
 (deftest absolute?
   (facts
     (paths/absolute? (paths/relativize wd example )) => false
-    (paths/absolute? absolute-example) => true))
+    (paths/absolute? example) => true))
 
 
 (deftest nomalize
@@ -76,6 +76,6 @@
 (deftest real-path
   (facts
     (paths/real-path example) =throws=> Exception
-    (paths/real-path wd) => true))
+    (paths/real-path wd) => truthy))
 
-(clojure.test/run-tests)
+
