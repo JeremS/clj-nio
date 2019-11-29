@@ -204,20 +204,6 @@
 ;; Macros using the compiler.
 ;;----------------------------------------------------------------------------------------------------------------------
 
-(defn- conform-or-throw [spec v]
-  (let [conformed (s/conform spec v)]
-    (when (s/invalid? conformed)
-      (let [data (s/explain-data spec v)]
-        (throw (ex-info (str "Error conforming.\n" (with-out-str (s/explain-out data)))
-                        data))))
-    conformed))
-
-
-(defn- params->ctxt [spec args]
-  (let [conformed (conform-or-throw spec args)
-        ctxt (dissoc conformed :opts)
-        opts (get conformed :opts)]
-    (merge opts ctxt)))
 
 
 (s/def ::def-java-call-opts
@@ -243,7 +229,7 @@
   {:arglists '([name docstring? attr-map? tag method opts?])}
   [& args]
   (->> args
-       (params->ctxt ::def-java-call)
+       (u/parse-params ::def-java-call)
        (compile-java-call)))
 
 
@@ -289,7 +275,7 @@
   {:arglists '([name docstring? attr-map? tag method opts?])}
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (method-on-pass `coerce/path false)
       compile-java-call))
 
@@ -303,7 +289,7 @@
   - `:coercions` : ex {x path y fs}"
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (method-on-pass `coerce/file-system false)
       compile-java-call))
 
@@ -317,7 +303,7 @@
   - `:coercions` : ex {x path y fs}"
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (method-on-pass `coerce/file-store false)
       compile-java-call))
 
@@ -326,7 +312,7 @@
   "Define a java method call on 2 paths defined with `def-java-call`."
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (assoc :additional-params '[other]
              :coercions {'other `coerce/path})
       (method-on-pass `coerce/path false)
@@ -355,7 +341,7 @@
   "Define a java method call on a path and variadic links-options"
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (variadic-method-on-pass 'links `coerce/link-option-array)
       (method-on-pass `coerce/path false)
       compile-java-call))
@@ -365,7 +351,7 @@
   "Defines a create function of a path and variadic file attributes."
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (variadic-method-on-pass 'file-attributes `coerce/file-attribute-array)
       (method-on-pass `coerce/path false)
       compile-java-call))
@@ -375,7 +361,7 @@
   "Define a java method call on a path and variadic open-opts"
   [& args]
   (-> args
-      (->> (params->ctxt ::def-method-on))
+      (->> (u/parse-params ::def-method-on))
       (variadic-method-on-pass 'open-opts `coerce/open-option-array)
       (method-on-pass `coerce/path false)
       compile-java-call))

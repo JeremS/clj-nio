@@ -1,14 +1,25 @@
 (ns com.jeremyschoffen.java.nio.internal.utils
   (:require
+    [clojure.spec.alpha :as s]
     [clojure.pprint :as pp])
   (:import
     (java.lang AutoCloseable)))
 
 
-(defn- make-return-type-notice [metadata-map]
-  (when-let [type (:return-type metadata-map
-                    (:tag metadata-map))]
-    (format "Return type: %s" type)))
+(defn conform-or-throw [spec v]
+  (let [conformed (s/conform spec v)]
+    (when (s/invalid? conformed)
+      (let [data (s/explain-data spec v)]
+        (throw (ex-info (str "Error conforming.\n" (with-out-str (s/explain-out data)))
+                        data))))
+    conformed))
+
+
+(defn parse-params [spec args]
+  (let [conformed (conform-or-throw spec args)
+        ctxt (dissoc conformed :opts)
+        opts (get conformed :opts)]
+    (merge opts ctxt)))
 
 
 (defn- make-return-type-notice [metadata-map]
@@ -55,10 +66,21 @@
     "Remember to close the result of this function."))
 
 
+(defn- make-accepted-keywords-notice [m]
+  (when-let [kws (get m :coercions/keywords)]
+    (let [rows (map (fn [[k v]] {"Keyword" k "Enum val" v})
+                    kws)]
+      (str "Accepted keywords:\n"
+           (with-out-str
+             (pp/print-table ["Keyword" "Enum val"] rows))))))
+
+
 (def ^:private notice-makers
   [make-return-type-notice
+   make-close-warning-notice
    make-coercion-notice
-   make-close-warning-notice])
+   make-accepted-keywords-notice])
+
 
 
 (def ^:private make-notices (apply juxt notice-makers))

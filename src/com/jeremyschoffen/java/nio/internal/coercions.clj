@@ -1,5 +1,6 @@
 (ns com.jeremyschoffen.java.nio.internal.coercions
   (:require
+    [clojure.spec.alpha :as s]
     [clojure.java.io :as io]
     [com.jeremyschoffen.java.nio.internal.utils :as u])
   (:import
@@ -19,10 +20,6 @@
     (java.time Instant)
     (java.util  Date Map Set)
     (java.util.function BiPredicate)))
-
-
-
-(set! *warn-on-reflection* true)
 
 
 (defn bi-predicate
@@ -61,12 +58,22 @@
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Utils
 ;;----------------------------------------------------------------------------------------------------------------------
-(defmacro ^:private def-u-coercion [n tag coerce-fn]
-  (let [docstring (format "Coerce the value `x` into the type: %s" (resolve tag))]
-    `(u/defn-wn ~n
+(s/def ::def-u-coercion-args (s/cat :name symbol?
+                                    :tag symbol?
+                                    :coerce-fn symbol?
+                                    :opts (s/? map?)))
+
+
+(defmacro ^:private def-u-coercion [& args]
+  (let [{:keys [name tag coerce-fn]
+         kws->v :coercions/keywords} (u/parse-params ::def-u-coercion-args args)
+        docstring (format "Coerce the value `x` into the type: %s." (resolve tag))
+        attr-map (cond-> `{:arglists '([x])
+                           :tag      ~tag}
+                         kws->v (assoc :coercions/keywords kws->v))]
+    `(u/defn-wn ~name
        ~docstring
-       {:arglists '([x])
-        :tag ~tag}
+       ~attr-map
        [x#]
        (~coerce-fn x#))))
 
@@ -210,7 +217,7 @@
   (apply io/input-stream x opts))
 
 
-(u/defn-wn ^OutputStream output-stream
+(u/defn-wn output-stream
   "Delegates to `clojure.java.io/output-stream`"
   {:tag OutputStream}
   [x & opts]
@@ -320,7 +327,16 @@
   (-to-file-time [this] this))
 
 
-(def-u-coercion file-time FileTime -to-file-time)
+(def-u-coercion file-time* FileTime -to-file-time)
+
+(u/defn-wn file-time
+  "Coerce the value `x` into the type: class java.nio.file.attribute.FileTime
+  If called with no argument returns `(file-time (Date.))`"
+  {:tag FileTime}
+  ([]
+   (file-time* (Date.)))
+  ([x]
+   (file-time* x)))
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; FileStore
@@ -374,7 +390,10 @@
          (~protocol-fn-name [this#]
            (~kw->type-name this#)))
 
-       (def-u-coercion ~coercion-name ~result-type ~protocol-fn-name))))
+       (def-u-coercion ~coercion-name
+         ~result-type
+         ~protocol-fn-name
+         {:coercions/keywords '~coercion-table}))))
 
 
 ;;----------------------------------------------------------------------------------------------------------------------
@@ -400,7 +419,9 @@
    (cond
      (string? x) (PosixFilePermissions/fromString x)
      ((some-fn sequential? set?) x) (coerce-many posix-file-permission x)
-     :else #{(posix-file-permission x)})))
+     :else #{(posix-file-permission x)}))
+  ([x & xs]
+   (posix-file-permissions (cons x xs))))
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Watch event
@@ -452,7 +473,9 @@
   ([x]
    (if ((some-fn sequential? set?) x)
      (coerce-many open-option x)
-     #{(open-option x)})))
+     #{(open-option x)}))
+  ([x & xs]
+   (open-options (cons x xs))))
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Link opts
@@ -475,7 +498,9 @@
   ([x]
    (if ((some-fn sequential? set?) x)
      (coerce-many file-visit-option x)
-     #{(file-visit-option x)})))
+     #{(file-visit-option x)}))
+  ([x & xs]
+   (file-visit-options (cons x xs))))
 
 
 (comment
@@ -498,7 +523,7 @@
   ([n t coercion]
    (let [tag (type (make-array (resolve t) 0))
          docstring (cond->(format "Contruct a java array whose elements are of type: %s" t)
-                          coercion (str (format "\nElement are coerced automatically with: %s" coercion)))
+                          coercion (str (format "\nElements are coerced automatically with: %s" coercion)))
          seq-sym (gensym "seq_param__")]
      `(defn ~n
         ~docstring

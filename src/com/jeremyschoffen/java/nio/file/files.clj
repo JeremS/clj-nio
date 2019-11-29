@@ -37,7 +37,7 @@
               (i/copy-option-array copy-opts)))
 
 
-(defn copy!
+(i/defn-wn copy!
   "Copy all bytes from a file to a file, file to an output stream, or
   input stream to a file. The return type depends on the form of
   copy. Copying to or from a stream will return a long of the number
@@ -45,9 +45,12 @@
   the path to the target. If the source or target are not streams,
   they will be coerced to paths. Copy options may be included for
   configuration when writing to a file."
+  {:arglists '([path os] [is path & copy-opts] [path path & copy-opts])
+   :coercions '{source (i/some-coercion i/path i/input-stream)
+                target (i/some-coercion i/path i/output-stream)}}
   [source target & copy-opts]
-  (let [source (i/some-coercion i/path i/input-stream)
-        target (i/some-coercion i/path i/output-stream)]
+  (let [source (i/some-coercion source i/path i/input-stream)
+        target (i/some-coercion target i/path i/output-stream)]
     (assert source "source must be coercible into a path or an input stream")
     (assert target "target must be coercible into a path or an output stream")
     (apply -copy! source target copy-opts)))
@@ -71,6 +74,7 @@
 
 (i/def-binary-path-fn create-link!
   "Creates a new link for an existing file."
+  {:arglists '([link existing])}
   Path Files/createLink)
 
 
@@ -82,15 +86,14 @@
                file-attributes i/file-attribute-array}})
 
 
-(i/defn-wn create-temp-directory
+(i/defn-wn create-temp-directory!
   "Creates a temporary directory with the given prefix in the given
   directory or the default temporary directory if none is provided."
   {:coercions '{dir i/path
                 file-attrs i/file-attribute-array}
    :tag Path}
-  [prefix & {dir        :dir
-             file-attrs :file-attrs
-             :or {dir        nil
+  [prefix & {dir :dir file-attrs :file-attrs
+             :or {dir nil
                   file-attrs []}}]
   (if dir
     (Files/createTempDirectory (i/path dir) prefix (i/file-attribute-array file-attrs))
@@ -129,7 +132,9 @@
 
 (i/defn-wn find
   "Same as `java.nio.Files/find`, with `p` as anything that can coerced int a Path and
-  `predicate` a clojure function that will automatically be turned into a `java.util.function.BiPredicate`."
+  `predicate` a clojure function that will automatically be turned into a
+  `java.util.function.BiPredicate<Path,BasicFileAttributes>`.
+  "
   {:coercions '{path            i/path
                 predicate       i/bi-predicate
                 file-visit-opts i/file-visit-option-array}

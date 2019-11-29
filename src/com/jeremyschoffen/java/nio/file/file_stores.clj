@@ -4,7 +4,6 @@
   (:import
     (java.nio.file.attribute FileStoreAttributeView)))
 
-(set! *warn-on-reflection* true)
 
 (i/def-file-store-fn attribute
   "Reads the value of a file store attribute."
@@ -41,6 +40,7 @@
 (i/def-file-store-fn name
   "Returns the name of this file store."
    String .name)
+
 
 (i/defn-wn supports-file-attribute-view
   "Tells whether or not this file store supports the file attributes identified by the given file attribute view."

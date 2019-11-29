@@ -1,6 +1,8 @@
+;; Copied from potemkin, v0.4.5 (https://github.com/ztellman/potemkin), MIT licnensed, Copyright Zachary Tellman
+
 (ns com.jeremyschoffen.java.nio.internal.potemkin.namespaces)
 
-;; taken from https://github.com/ztellman/potemkin/blob/master/src/potemkin/namespaces.clj
+
 (defn link-vars
   "Makes sure that all changes to `src` are reflected in `dst`."
   [src dst]

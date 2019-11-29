@@ -19,7 +19,7 @@
   Boolean .endsWith)
 
 
-(i/def-path-fn name
+(i/def-path-fn file-name
   "Returns the name of the file or directory denoted by the path."
   Path .getFileName)
 

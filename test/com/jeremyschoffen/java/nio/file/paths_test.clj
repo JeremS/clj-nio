@@ -25,7 +25,7 @@
 
 
 (deftest file-name
-  (fact (paths/name example) => (path resources-dir)))
+  (fact (paths/file-name example) => (path resources-dir)))
 
 
 (deftest file-system
