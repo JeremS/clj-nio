@@ -9,6 +9,15 @@
            (java.nio.file DirectoryStream)))
 
 
+
+(defn- get-java-version []
+  (->> (System/getProperty "java.version")
+       (re-matches #"(\d*).(\d*).(\d*)")
+       second
+       Integer/parseInt))
+
+(def api-version (get-java-version))
+
 (defmacro alias-def [alias aliased-name]
   (let [aliased-name (-> aliased-name resolve symbol)]
     `(n/import-def ~aliased-name ~alias)))
@@ -70,7 +79,7 @@
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Streams shenanigans
 ;;----------------------------------------------------------------------------------------------------------------------
-(defn realize-stream [^Stream s]
+(defn- realize-stream [^Stream s]
   (let [res (into [] (-> s
                          .iterator
                          iterator-seq
@@ -78,7 +87,7 @@
     (.close s)
     res))
 
-(defn realize-dir-stream [dir-s]
+(defn- realize-dir-stream [dir-s]
   (let [res (into [] (-> ^Iterable dir-s
                          .iterator
                          iterator-seq

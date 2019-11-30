@@ -120,9 +120,6 @@
 (defprotocol NaryPathBuilder
   (-to-n-path [this more]))
 
-
-(defn- path? [x] (isa? x Path))
-
 (declare path)
 
 (extend-protocol UnaryPathBuilder

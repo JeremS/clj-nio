@@ -17,7 +17,7 @@
   Iterable .getFileStores)
 
 
-(i/defn-wn path
+(i/defn-wn path-in-fs
   "Get a Path from a FileSystem and strings."
   {:coercions '{fs file-system}
    :tag Path}

@@ -50,6 +50,7 @@
     (.supportsFileAttributeView (i/file-store store) ^String str-or-class)
     (.supportsFileAttributeView (i/file-store store) ^Class str-or-class)))
 
+
 (i/def-file-store-fn type
   "Returns the name of this file store."
   String .type)
