@@ -83,7 +83,6 @@
 
 
 (defn- make-defn-body [ctxt]
-  [ctxt]
   (let [{:keys [name method this-coercion processed-arities arity-0]} ctxt]
     (cond->> (for [[params-decl coerced-params] processed-arities]
                `([~@params-decl]
