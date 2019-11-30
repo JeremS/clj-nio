@@ -110,6 +110,9 @@
 (defn coerce-many [coercion coll]
   (into #{} (map coercion) (flatten-even-sets coll)))
 
+(defn path? [x]
+  (isa? (type x) Path))
+
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Paths
 ;;----------------------------------------------------------------------------------------------------------------------
@@ -140,6 +143,8 @@
 
   Sequential
   (-to-u-path [this]
+    (assert (every? (some-fn string? path?) this)
+            "Sequence of paths to path takes only strings and paths.")
     (let [sanitized (into [] (comp (map -to-u-path) (map str)) this)]
       (apply path sanitized))))
 

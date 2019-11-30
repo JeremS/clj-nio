@@ -56,6 +56,7 @@
 (alias-fn open-options coerce/open-options)
 (alias-fn output-stream coerce/output-stream)
 (alias-fn path coerce/path)
+(alias-fn path? coerce/path?)
 (alias-fn posix-file-permission coerce/posix-file-permission)
 (alias-fn posix-file-permissions coerce/posix-file-permissions)
 (alias-fn some-coercion coerce/some-coercion)
