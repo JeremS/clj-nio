@@ -8,9 +8,8 @@
     [com.jeremyschoffen.java.nio.file.file-systems :as fs]
     [com.jeremyschoffen.java.nio.internal :as i])
   (:import
-    (java.io ByteArrayInputStream)
-    (java.util.stream Stream)
-    (java.lang AutoCloseable)))
+    (java.io ByteArrayInputStream)))
+
 
 (def on-posix (-> (i/file-system)
                   (fs/supported-file-attribute-views)
@@ -298,7 +297,7 @@
         all-dirs #{temp-dir dir-1 dir-2-1}]
     (files/create-directories! dir-1)
     (files/create-directories! dir-2-1)
-    (fact (set (i/realize-stream (files/walk temp-dir))) => all-dirs)))
+    (fact (set (i/realize (files/walk temp-dir))) => all-dirs)))
 
 
 (deftest write-bytes
