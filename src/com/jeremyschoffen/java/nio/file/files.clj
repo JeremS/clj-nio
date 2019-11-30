@@ -100,7 +100,7 @@
     (Files/createTempDirectory prefix (i/file-attribute-array file-attrs))))
 
 
-(i/defn-wn create-temp-file
+(i/defn-wn create-temp-file!
   "Creates a temporary file with the given prefix and suffix in the
   given directory or the default temporary directory if none is
   provided."
@@ -427,7 +427,7 @@
 
 
 (i/defn-wn write
-  "Write lines of text to a file."
+  "Write lines of text to a file. `lines` must be a Iterable<? extends CharSequence>"
   {:coercions '{p i/path
                 cs i/charset
                 open-opts i/open-option-array}

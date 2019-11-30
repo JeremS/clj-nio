@@ -3,7 +3,10 @@
     [com.jeremyschoffen.java.nio.internal.potemkin.namespaces :as n]
     [com.jeremyschoffen.java.nio.internal.utils :as u]
     [com.jeremyschoffen.java.nio.internal.coercions :as coerce]
-    [com.jeremyschoffen.java.nio.internal.def-helpers :as h]))
+    [com.jeremyschoffen.java.nio.internal.def-helpers :as h])
+  (:import (java.util.stream Stream)
+           (java.lang AutoCloseable)
+           (java.nio.file DirectoryStream)))
 
 
 (defmacro alias-def [alias aliased-name]
@@ -62,3 +65,35 @@
 (alias-macro def-create-fn h/def-create-fn)
 (alias-macro def-link-fn h/def-link-fn)
 (alias-macro def-open-fn h/def-open-fn)
+
+
+;;----------------------------------------------------------------------------------------------------------------------
+;; Streams shenanigans
+;;----------------------------------------------------------------------------------------------------------------------
+(defn realize-stream [^Stream s]
+  (let [res (into [] (-> s
+                         .iterator
+                         iterator-seq
+                         seq))]
+    (.close s)
+    res))
+
+(defn realize-dir-stream [dir-s]
+  (let [res (into [] (-> ^Iterable dir-s
+                         .iterator
+                         iterator-seq
+                         seq))]
+    (.close ^AutoCloseable dir-s)
+    res))
+
+
+(defprotocol StreamLike
+  (realize [this]))
+
+
+(extend-protocol StreamLike
+  Stream
+  (realize [this] (realize-stream this))
+
+  DirectoryStream
+  (realize [this] (realize-dir-stream this)))

@@ -1,5 +1,5 @@
 (ns com.jeremyschoffen.java.nio.file.files-test
-  (:refer-clojure :exclude [find])
+  (:refer-clojure :exclude [find list])
   (:require
     [clojure.test :refer [deftest testing]]
     [testit.core :refer :all]
@@ -7,8 +7,10 @@
     [com.jeremyschoffen.java.nio.file.files :as files]
     [com.jeremyschoffen.java.nio.file.file-systems :as fs]
     [com.jeremyschoffen.java.nio.internal :as i])
-  (:import (java.io ByteArrayInputStream)
-           (java.nio.file.attribute BasicFileAttributeView PosixFileAttributeView)))
+  (:import
+    (java.io ByteArrayInputStream)
+    (java.util.stream Stream)
+    (java.lang AutoCloseable)))
 
 (def on-posix (-> (i/file-system)
                   (fs/supported-file-attribute-views)
@@ -18,7 +20,7 @@
 (deftest copy!
   (let [temp-dir (files/create-temp-directory! "temp")
         some-text "some text!!!"
-        src (files/create-temp-file "src_" nil :dir temp-dir)]
+        src (files/create-temp-file! "src_" nil :dir temp-dir)]
 
     (testing "creating the source"
       (spit src some-text)
@@ -31,7 +33,7 @@
           (fact (slurp target1) => some-text)))
 
       (testing "On existing file"
-        (let [target2 (files/create-temp-file "target2_" nil :dir temp-dir)]
+        (let [target2 (files/create-temp-file! "target2_" nil :dir temp-dir)]
           (fact (files/copy! src target2) =throws=> Exception)
           (files/copy! src target2 :replace-existing)
           (fact (slurp target2) => some-text))))
@@ -89,6 +91,7 @@
     (facts
       (every? files/exists? all-files) => true
       (files/symbolic-link? sym-link) => true
+      (files/read-symbolic-link sym-link) => original-path
       (slurp original-path) => ""
       (slurp link) => ""
       (slurp sym-link) => "")
@@ -168,7 +171,7 @@
 (when on-posix
   (deftest posix-permissions
     (let [temp-dir (files/create-temp-directory! "temp")
-          temp-file (files/create-temp-file "temp" nil :dir temp-dir)
+          temp-file (files/create-temp-file! "temp" nil :dir temp-dir)
           perms #(files/posix-file-permisions temp-file)]
       (facts (perms) => (i/posix-file-permissions :owner-read :owner-write))
       (files/set-posix-file-permissions! temp-file :group-read)
@@ -177,8 +180,8 @@
 
 (deftest bools
   (let [temp-dir (files/create-temp-directory! "temp_")
-        temp-file (files/create-temp-file "temp_" nil :dir temp-dir)
-        hidden (files/create-temp-file ".temp_" nil :dir temp-dir)]
+        temp-file (files/create-temp-file! "temp_" nil :dir temp-dir)
+        hidden (files/create-temp-file! ".temp_" nil :dir temp-dir)]
 
     (facts
       (files/directory? temp-dir) => true
@@ -213,9 +216,98 @@
       (files/writable? temp-file) => true
       (files/writable? hidden) => false)))
 
-(deftest lines [])
+
+(deftest lines
+  (let [temp-file (files/create-temp-file! "test" nil)
+        lines (mapv str (range 10))
+        text (with-out-str (doseq [l lines] (println l)))]
+    (spit temp-file text)
+    (fact (i/realize (files/lines temp-file)) => lines)))
+
+
+(deftest list
+  (let [temp-dir (files/create-temp-directory! "temp")
+        temp-file1 (files/create-temp-file! "temp" nil :dir temp-dir)
+        temp-file2 (files/create-temp-file! "temp" nil :dir temp-dir)
+        temp-file3 (files/create-temp-file! "temp" nil :dir temp-dir)]
+    (fact
+       (-> temp-dir files/list i/realize set)
+       => #{temp-file1 temp-file2 temp-file3})))
+
+
+(deftest move!
+  (let [temp-dir (files/create-temp-directory! "temp")
+        dir1 (files/create-directory! (path temp-dir "1"))
+        dir2 (files/create-directory! (path temp-dir "2"))
+        file-src (path temp-dir "1" "f")
+        file-dest (path temp-dir "2" "f")
+        some-text "12345"]
+    (spit file-src some-text)
+
+    (facts
+      (files/exists? file-src) => true
+      (files/not-exists? file-dest) => true
+      (slurp file-src) => some-text)
+
+    (files/move! file-src file-dest)
+
+    (facts
+      (files/not-exists? file-src) => true
+      (files/exists? file-dest) => true
+      (slurp file-dest) => some-text)))
+
+
+(deftest new-dir-stream
+  (let [temp-dir (files/create-temp-directory! "temp")
+        temp-file1 (files/create-temp-file! "temp" ".txt" :dir temp-dir)
+        temp-file2 (files/create-temp-file! "temp" ".clj" :dir temp-dir)
+        temp-file3 (files/create-temp-file! "temp" ".txt" :dir temp-dir)
+        all-files #{temp-file1 temp-file2 temp-file3}
+        txt-files (disj all-files temp-file2)
+        clj-files #{temp-file2}
+        get-files (fn [& args]
+                    (-> (apply files/new-directory-Stream temp-dir args)
+                        i/realize
+                        set))]
+
+      (facts
+        (get-files)                                => all-files
+        (get-files "*.txt")                        => txt-files
+        (get-files #(-> % str (.endsWith ".clj"))) => clj-files)))
+
+
+(deftest probe
+  (let [temp-file (files/create-temp-file! "temp" ".txt")]
+    (spit temp-file "some text...")
+    (slurp temp-file)
+    (fact (files/probe-content-type temp-file) => "text/plain")))
+
+
+(deftest read-all-lines
+  (let [temp-file (files/create-temp-file! "test" nil)
+        lines (mapv str (range 10))
+        text (with-out-str (doseq [l lines] (println l)))]
+    (spit temp-file text)
+    (fact (files/read-all-lines temp-file) => lines)))
+
+
+(deftest walk
+  (let [temp-dir (files/create-temp-directory! "temp")
+        dir-1 (paths/resolve temp-dir (path "1"))
+        dir-2-1 (paths/resolve temp-dir (path "1" "2"))
+        all-dirs #{temp-dir dir-1 dir-2-1}]
+    (files/create-directories! dir-1)
+    (files/create-directories! dir-2-1)
+    (fact (set (i/realize-stream (files/walk temp-dir))) => all-dirs)))
+
+
+(deftest write-bytes
+  (let [temp-file (files/create-temp-file! "test" nil)
+        some-text "ttt"]
+    (files/write-bytes temp-file (.getBytes some-text))
+    (fact (slurp temp-file) => some-text)))
 
 (clojure.test/run-tests)
 
-;(clojure.repl/doc files/file-store)
+;(clojure.repl/doc files/create-directory!)
 ;(clojure.repl/doc files/set-posix-file-permissions!)
