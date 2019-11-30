@@ -326,7 +326,8 @@
 
 (i/def-java-call read-all-lines
   "Returns the lines of a file."
-  {:return-generic String}
+  {:since 8
+   :return-generic String}
   List Files/readAllLines
   {:arities [[p] [p cs]]
    :coercions {p i/path
@@ -430,7 +431,8 @@
 
 (i/defn-wn write
   "Write lines of text to a file. `lines` must be a Iterable<? extends CharSequence>"
-  {:coercions '{p i/path
+  {:since 8
+   :coercions '{p i/path
                 cs i/charset
                 open-opts i/open-option-array}
    :tag Path}
