@@ -111,10 +111,9 @@
 
 
 (defn- ensure-arglists-pass [ctxt]
-  (let [arglists (get-in ctxt [:attr-map :arglists])]
-    (if arglists
-      ctxt
-      (assoc-arglists-pass ctxt))))
+  (if (get-in ctxt [:attr-map :arglists])
+    ctxt
+    (assoc-arglists-pass ctxt)))
 
 
 (defn add-coercion-table-to-attr-map-pass [ctxt]
@@ -123,6 +122,12 @@
                           (and inject-this this-coercion)
                           (assoc 'this this-coercion))]
     (assoc-in ctxt [:attr-map :coercions] (list 'quote coercions))))
+
+
+(defn- assoc-metadata-pass [ctxt]
+  (-> ctxt
+      ensure-arglists-pass
+      add-coercion-table-to-attr-map-pass))
 
 
 (defn- make-defn [ctxt]
@@ -194,8 +199,7 @@
       assoc-gen-syms-pass
       assoc-processed-arities-pass
       assoc-defn-body-pass
-      ensure-arglists-pass
-      add-coercion-table-to-attr-map-pass
+      assoc-metadata-pass
       assoc-defn-pass
       :defn))
 
