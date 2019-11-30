@@ -245,6 +245,7 @@
 
 (i/def-java-call new-buffered-reader
   "Create a buffered reader from a file."
+  {:since 8}
   BufferedReader Files/newBufferedReader
   {:arities [[path] [path cs]]
    :coercions {path i/path
@@ -253,7 +254,8 @@
 
 (i/defn-wn new-buffered-writer
   "Creates a buffered writer"
-  {:coercions '{p i/path
+  {:since 8
+   :coercions '{p i/path
                 cs i/charset
                 open-opts i/open-option-array}
    :tag BufferedWriter}

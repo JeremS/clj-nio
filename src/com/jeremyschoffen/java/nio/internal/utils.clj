@@ -5,7 +5,6 @@
   (:import
     (java.lang AutoCloseable)))
 
-
 (defn conform-or-throw [spec v]
   (let [conformed (s/conform spec v)]
     (when (s/invalid? conformed)
@@ -20,6 +19,26 @@
         ctxt (dissoc conformed :opts)
         opts (get conformed :opts)]
     (merge opts ctxt)))
+
+
+(defn major-number [version]
+  (let [[major minor] (->> version
+                           (re-matches #"(\d*).(\d*).(\d*)")
+                           rest
+                           (map #(Integer/parseInt %)))]
+    (if (= major 1)
+      minor
+      major)))
+
+
+(def java-version (System/getProperty "java.version"))
+(def java-major (major-number java-version))
+
+
+(defn make-unsupported-notice [metadata-map]
+  (when-let [since (:since metadata-map)]
+    (when (< java-major since)
+      (format "-- Warning -- The current jdk  %s  doesn't support this yet. Upgrade to java %s to use it." java-version since))))
 
 
 (defn- make-return-type-notice [metadata-map]
@@ -76,11 +95,11 @@
 
 
 (def ^:private notice-makers
-  [make-return-type-notice
+  [make-unsupported-notice
+   make-return-type-notice
    make-close-warning-notice
    make-coercion-notice
    make-accepted-keywords-notice])
-
 
 
 (def ^:private make-notices (apply juxt notice-makers))
@@ -97,8 +116,21 @@
         (assoc :doc (apply str notices)))))
 
 
+(defn make-unsupported-operation [since]
+  (fn [& args]
+    (throw (UnsupportedOperationException. (format "Not supported in java %s, appeared in java %s." java-version since)))))
+
+
+(defn change-to-unsupported-operation-if-necessary! [a-var]
+  (let [metadata (meta a-var)]
+    (when-let [since (:since metadata)]
+      (if (< java-major since)
+        (alter-var-root a-var (constantly (make-unsupported-operation since)))))))
+
+
 (defmacro defn-wn [n & args]
   `(do
      (defn ~n ~@args)
      (alter-meta! (var ~n) add-notices)
+     (change-to-unsupported-operation-if-necessary! (var ~n))
      (var ~n)))
