@@ -150,6 +150,10 @@
 
 
 (extend-protocol NaryPathBuilder
+  Object
+  (-to-n-path [this more]
+    (-to-n-path (-to-u-path this) more))
+
   Path
   (-to-n-path [this more]
     (.resolve ^Path this (str (-to-u-path more))))

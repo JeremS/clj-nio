@@ -89,7 +89,8 @@
 
 
 (defprotocol StreamLike
-  (realize [this]))
+  (realize [this]
+    "Eagerly convert a java stream (or stream like thing) into a vector, closes the stream it and returns the vector."))
 
 
 (extend-protocol StreamLike

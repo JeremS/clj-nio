@@ -7,6 +7,7 @@
   (:import
     (java.nio.file FileSystems)))
 
+
 (def wd (-> "." paths/path paths/absolute-path))
 (def resources-dir "resources")
 (def example (path wd resources-dir))

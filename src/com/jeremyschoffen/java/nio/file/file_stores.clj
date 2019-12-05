@@ -1,5 +1,4 @@
 (ns com.jeremyschoffen.java.nio.file.file-stores
-  (:refer-clojure :exclude [name type])
   (:require [com.jeremyschoffen.java.nio.internal :as i])
   (:import
     (java.nio.file.attribute FileStoreAttributeView)))
@@ -37,7 +36,7 @@
   Boolean .isReadOnly)
 
 
-(i/def-file-store-fn name
+(i/def-file-store-fn file-store-name
   "Returns the name of this file store."
    String .name)
 
@@ -51,6 +50,6 @@
     (.supportsFileAttributeView (i/file-store store) ^Class str-or-class)))
 
 
-(i/def-file-store-fn type
+(i/def-file-store-fn file-store-type
   "Returns the name of this file store."
   String .type)
