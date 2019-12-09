@@ -144,7 +144,7 @@
   Sequential
   (-to-u-path [this]
     (assert (every? (some-fn string? path?) this)
-            "Sequence of paths to path takes only strings and paths.")
+            (str "Sequence of paths to path takes only strings and paths, had:\n" this))
     (let [sanitized (into [] (comp (map -to-u-path) (map str)) this)]
       (apply path sanitized))))
 
