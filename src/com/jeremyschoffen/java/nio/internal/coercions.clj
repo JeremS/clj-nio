@@ -190,12 +190,25 @@
 ;; URI
 ;;----------------------------------------------------------------------------------------------------------------------
 
+(defprotocol URIBuilder
+  (-to-uri [this]))
+
+(extend-protocol URIBuilder
+  URI
+  (-to-uri [this] this)
+
+  String
+  (-to-uri [this] (URI. this))
+
+  Object
+  (-to-uri [this] (.toUri (path this))))
+
 (u/defn-wn uri
   "Transforms anything that can be a path into a uri"
   {:arglists '([path] [uri] [file] [[strings]] [filesystem & strings] [string & strings])
    :tag URI}
   ([x]
-   (.toUri (path x)))
+   (-to-uri x))
   ([x & xs]
    (.toUri ^Path (apply path x xs))))
 
@@ -291,7 +304,7 @@
   The other arity-1 variants behave as such:
    - [fs]: returns the file system
    - [path] : get the file file system with (.getFileSystem (coerce/path path))
-   - [uri] : uses the FileSystems/new static method on the corced parameter with the uri coercion.
+   - [uri] : uses the FileSystems/new static method on the coerced parameter with the uri coercion.
 
   The arity-2 and arity-3 variants call FileSystem/new.
   "
@@ -309,8 +322,8 @@
    (-file-system something))
   ([uri-or-path env-or-classloader]
    (if (isa? (type env-or-classloader) ClassLoader)
-     (-new-file-system (uri uri-or-path) env-or-classloader)
-     (-new-file-system (path uri-or-path) env-or-classloader)))
+     (-new-file-system (path uri-or-path) env-or-classloader)
+     (-new-file-system (uri uri-or-path) env-or-classloader)))
   ([uri env classloader]
    (FileSystems/newFileSystem (uri uri) env classloader)))
 
