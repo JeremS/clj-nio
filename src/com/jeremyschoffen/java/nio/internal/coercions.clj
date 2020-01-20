@@ -110,8 +110,12 @@
 (defn coerce-many [coercion coll]
   (into #{} (map coercion) (flatten-even-sets coll)))
 
+
 (defn path? [x]
   (isa? (type x) Path))
+
+(defn file-system? [x]
+  (isa? (type x) FileSystem))
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Paths

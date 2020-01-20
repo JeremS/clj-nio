@@ -35,6 +35,7 @@
 (alias-fn file-attribute-array coerce/file-attribute-array)
 (alias-fn file-store coerce/file-store)
 (alias-fn file-system coerce/file-system)
+(alias-fn file-system? coerce/file-system?)
 (alias-fn file-time coerce/file-time)
 (alias-fn file-visit-option coerce/file-visit-option)
 (alias-fn file-visit-option-array coerce/file-visit-option-array)
