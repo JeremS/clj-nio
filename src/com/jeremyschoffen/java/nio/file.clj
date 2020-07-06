@@ -8,10 +8,14 @@
     [com.jeremyschoffen.java.nio.file.file-stores :as file-stores]
     [com.jeremyschoffen.java.nio.file.attribute.posix-file-permissions :as posix-perms]
     [clojure.java.io :as io]
-    [clojure.edn :as edn]))
+    [clojure.edn :as edn])
+  (:import
+    (java.io File)
+    (java.nio.file Path)))
 
 
 (i/alias-fn path? i/path?)
+(i/alias-fn url? i/url?)
 (i/alias-fn file-system? i/file-system?)
 
 ;;----------------------------------------------------------------------------------------------------------------------
@@ -146,6 +150,14 @@
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Goodies
 
+(i/defn-wn canonical-path
+  "Returns a canonical path."
+  {:tag Path
+   :coercions '{p path}}
+  [p]
+  (-> p path file .getCanonicalPath path))
+
+
 (i/defn-wn ancestor?
   "Determines the first parameter is a parent (loose sense) path of the second."
   {:coercions '{parent path
@@ -153,6 +165,16 @@
   [parent child]
   (starts-with? (-> child absolute-path normalize)
                 (-> parent absolute-path normalize)))
+
+(i/defn-wn file-extention
+  {:coercions '{parent path}}
+  [p]
+  (let [p (path p)
+        n (str (file-name p))
+        i (.lastIndexOf n ".")]
+    (if (< i 0)
+      nil
+      (.substring n (inc i)))))
 
 (comment
   (do ;; look for duplicates

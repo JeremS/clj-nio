@@ -92,12 +92,14 @@
   {:coercions '{dir i/path
                 file-attrs i/file-attribute-array}
    :tag Path}
-  [prefix & {dir :dir file-attrs :file-attrs
-             :or {dir nil
-                  file-attrs []}}]
-  (if dir
-    (Files/createTempDirectory (i/path dir) prefix (i/file-attribute-array file-attrs))
-    (Files/createTempDirectory prefix (i/file-attribute-array file-attrs))))
+  ([prefix]
+   (create-temp-directory! prefix {}))
+  ([prefix {dir :dir file-attrs :file-attrs
+            :or {dir nil
+                 file-attrs []}}]
+   (if dir
+     (Files/createTempDirectory (i/path dir) prefix (i/file-attribute-array file-attrs))
+     (Files/createTempDirectory prefix (i/file-attribute-array file-attrs)))))
 
 
 (i/defn-wn create-temp-file!
@@ -107,11 +109,13 @@
   {:coercions '{dir i/path
                 file-attrs i/file-attribute-array}
    :tag Path}
-  [prefix suffix & {dir :dir file-attrs :file-attrs
-                    :or {dir nil file-attrs []}}]
-  (if dir
-    (Files/createTempFile (i/path dir) prefix suffix (i/file-attribute-array file-attrs))
-    (Files/createTempFile prefix suffix (i/file-attribute-array file-attrs))))
+  ([prefix suffix]
+   (create-temp-file! prefix suffix {}))
+  ([prefix suffix {dir :dir file-attrs :file-attrs
+                   :or {dir nil file-attrs []}}]
+   (if dir
+     (Files/createTempFile (i/path dir) prefix suffix (i/file-attribute-array file-attrs))
+     (Files/createTempFile prefix suffix (i/file-attribute-array file-attrs)))))
 
 
 (i/def-path-fn delete!
@@ -253,7 +257,7 @@
 
 
 (i/defn-wn new-buffered-writer
-  "Creates a buffered writer"
+  "Creates a buffered writer."
   {:since 8
    :coercions '{p i/path
                 cs i/charset
@@ -393,7 +397,8 @@
 (i/defn-wn walk
   "Return a Stream that is lazily populated with Path by walking the file
   tree rooted at a given starting file."
-  {:coercions '{p i/path
+  {:since 8
+   :coercions '{p i/path
                 file-visit-opts i/file-visit-option-array}
    :return-generic Path
    :tag Stream}

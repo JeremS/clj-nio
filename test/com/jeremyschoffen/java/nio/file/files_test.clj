@@ -19,7 +19,7 @@
 (deftest copy!
   (let [temp-dir (files/create-temp-directory! "temp")
         some-text "some text!!!"
-        src (files/create-temp-file! "src_" nil :dir temp-dir)]
+        src (files/create-temp-file! "src_" nil {:dir temp-dir})]
 
     (testing "creating the source"
       (spit src some-text)
@@ -32,7 +32,7 @@
           (fact (slurp target1) => some-text)))
 
       (testing "On existing file"
-        (let [target2 (files/create-temp-file! "target2_" nil :dir temp-dir)]
+        (let [target2 (files/create-temp-file! "target2_" nil {:dir temp-dir})]
           (fact (files/copy! src target2) =throws=> Exception)
           (files/copy! src target2 :replace-existing)
           (fact (slurp target2) => some-text))))
@@ -170,7 +170,7 @@
 (when on-posix
   (deftest posix-permissions
     (let [temp-dir (files/create-temp-directory! "temp")
-          temp-file (files/create-temp-file! "temp" nil :dir temp-dir)
+          temp-file (files/create-temp-file! "temp" nil {:dir temp-dir})
           perms #(files/posix-file-permisions temp-file)]
       (facts (perms) => (i/posix-file-permissions :owner-read :owner-write))
       (files/set-posix-file-permissions! temp-file :group-read)
@@ -179,8 +179,8 @@
 
 (deftest bools
   (let [temp-dir (files/create-temp-directory! "temp_")
-        temp-file (files/create-temp-file! "temp_" nil :dir temp-dir)
-        hidden (files/create-temp-file! ".temp_" nil :dir temp-dir)]
+        temp-file (files/create-temp-file! "temp_" nil {:dir temp-dir})
+        hidden (files/create-temp-file! ".temp_" nil {:dir temp-dir})]
 
     (facts
       (files/directory? temp-dir) => true
@@ -226,9 +226,9 @@
 
 (deftest list
   (let [temp-dir (files/create-temp-directory! "temp")
-        temp-file1 (files/create-temp-file! "temp" nil :dir temp-dir)
-        temp-file2 (files/create-temp-file! "temp" nil :dir temp-dir)
-        temp-file3 (files/create-temp-file! "temp" nil :dir temp-dir)]
+        temp-file1 (files/create-temp-file! "temp" nil {:dir temp-dir})
+        temp-file2 (files/create-temp-file! "temp" nil {:dir temp-dir})
+        temp-file3 (files/create-temp-file! "temp" nil {:dir temp-dir})]
     (fact
        (-> temp-dir files/list i/realize set)
        => #{temp-file1 temp-file2 temp-file3})))
@@ -238,8 +238,8 @@
   (let [temp-dir (files/create-temp-directory! "temp")
         dir1 (files/create-directory! (path temp-dir "1"))
         dir2 (files/create-directory! (path temp-dir "2"))
-        file-src (path temp-dir "1" "f")
-        file-dest (path temp-dir "2" "f")
+        file-src (path dir1 "f")
+        file-dest (path dir2 "f")
         some-text "12345"]
     (spit file-src some-text)
 
@@ -258,9 +258,9 @@
 
 (deftest new-dir-stream
   (let [temp-dir (files/create-temp-directory! "temp")
-        temp-file1 (files/create-temp-file! "temp" ".txt" :dir temp-dir)
-        temp-file2 (files/create-temp-file! "temp" ".clj" :dir temp-dir)
-        temp-file3 (files/create-temp-file! "temp" ".txt" :dir temp-dir)
+        temp-file1 (files/create-temp-file! "temp" ".txt" {:dir temp-dir})
+        temp-file2 (files/create-temp-file! "temp" ".clj" {:dir temp-dir})
+        temp-file3 (files/create-temp-file! "temp" ".txt" {:dir temp-dir})
         all-files #{temp-file1 temp-file2 temp-file3}
         txt-files (disj all-files temp-file2)
         clj-files #{temp-file2}

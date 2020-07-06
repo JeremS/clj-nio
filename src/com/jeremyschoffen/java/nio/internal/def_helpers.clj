@@ -269,7 +269,7 @@
 
 
 (defmacro def-path-fn
-  "Define function an a path.
+  "Defines function on a path.
   :inject-this is true, :this-coercion is set to `coercions/path`
 
   opts:

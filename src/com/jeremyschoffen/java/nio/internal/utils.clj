@@ -14,17 +14,20 @@
     conformed))
 
 
-(defn parse-params [spec args]
+(defn parse-params
+  "Expects a spec like (cat :x x? :y y? :opts (? map?))"
+  [spec args]
   (let [conformed (conform-or-throw spec args)
         ctxt (dissoc conformed :opts)
         opts (get conformed :opts)]
     (merge opts ctxt)))
 
 
-(defn major-number [version]
+(defn- major-number [version]
   (let [[major minor] (->> version
-                           (re-matches #"(\d*).(\d*).(\d*)")
+                           (re-matches #"(\d*)(?:(?:\.(\d*))?(?:\.(\d*))?)?")
                            rest
+                           (filter identity)
                            (map #(Integer/parseInt %)))]
     (if (= major 1)
       minor
@@ -116,9 +119,12 @@
         (assoc :doc (apply str notices)))))
 
 
+(defn throw-unsuported [since]
+  (throw (UnsupportedOperationException. (format "Not supported in java %s, appeared in java %s." java-version since))))
+
 (defn make-unsupported-operation [since]
-  (fn [& args]
-    (throw (UnsupportedOperationException. (format "Not supported in java %s, appeared in java %s." java-version since)))))
+  (fn [& _]
+    (throw-unsuported since)))
 
 
 (defn change-to-unsupported-operation-if-necessary! [a-var]
@@ -134,3 +140,9 @@
      (alter-meta! (var ~n) add-notices)
      (change-to-unsupported-operation-if-necessary! (var ~n))
      (var ~n)))
+
+
+(defmacro since [v & body]
+  (if (< java-major v)
+    `(throw-unsuported ~v)
+    `(do ~@body)))

@@ -54,6 +54,7 @@
 (alias-fn some-coercion coerce/some-coercion)
 (alias-fn uri coerce/uri)
 (alias-fn url coerce/url)
+(alias-fn url? coerce/url?)
 (alias-fn watch-event-kind coerce/watch-event-kind)
 (alias-fn watch-event-kind-array coerce/watch-event-kind-array)
 (alias-fn watch-event-modifier-array coerce/watch-event-modifier-array)

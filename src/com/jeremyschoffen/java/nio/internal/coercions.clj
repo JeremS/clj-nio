@@ -112,10 +112,15 @@
 
 
 (defn path? [x]
-  (isa? (type x) Path))
+  (instance? Path x))
+
+
+(defn url? [x]
+  (instance? URL x))
+
 
 (defn file-system? [x]
-  (isa? (type x) FileSystem))
+  (instance? FileSystem x))
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Paths
@@ -145,6 +150,10 @@
   URL
   (-to-u-path [this] (-to-u-path (.toURI this)))
 
+  FileSystem
+  (-to-u-path [this]
+    (.getPath this "/" (into-array String nil)))
+
   Sequential
   (-to-u-path [this]
     (assert (every? (some-fn string? path?) this)
@@ -169,9 +178,10 @@
 
   FileSystem
   (-to-n-path [this more]
-    (assert (every? string? more))
-    (let [[s & r] more]
-      (.getPath this s (into-array String r)))))
+    (let [[s & r] (map str  (apply path more))]
+      (if s
+        (.getPath this s (into-array String r))
+        (.getPath this "/" (into-array String nil))))))
 
 
 (u/defn-wn path
@@ -189,7 +199,6 @@
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; URI
 ;;----------------------------------------------------------------------------------------------------------------------
-
 (defprotocol URIBuilder
   (-to-uri [this]))
 
@@ -277,12 +286,15 @@
 (def-u-coercion -file-system FileSystem -to-file-system)
 
 
-(defmulti ^:private -new-file-system (fn [arg1 arg2]
-                                       [(type arg1) (type arg2)]))
+(defmulti ^:private -new-file-system (fn [& args]
+                                       (mapv type args)))
 
 
-(defmethod -new-file-system :default [arg1 arg2]
-  (throw (IllegalArgumentException. (format "Can't create a filesystem with %s to %s" (type arg1) (type arg2)))))
+
+(defmethod -new-file-system :default [& args]
+  (throw (IllegalArgumentException. (str "Can't create a filesystem with paramter of types: "
+                                         (clojure.string/join " " (map type args))
+                                         "."))))
 
 
 (defmethod -new-file-system [URI Map]
@@ -290,10 +302,26 @@
   (FileSystems/newFileSystem uri m))
 
 
+(defmethod -new-file-system [URI Map ClassLoader]
+  [^URI u ^Map m ^ClassLoader c]
+  (FileSystems/newFileSystem u m c))
+
+
+(defmethod -new-file-system [Path Map]
+  [^Path p ^Map m]
+  (u/since 13
+    (FileSystems/newFileSystem p m)))
+
+
 (defmethod -new-file-system [Path ClassLoader]
   [^Path p ^ClassLoader c]
   (FileSystems/newFileSystem p c))
 
+
+(defmethod -new-file-system [Path Map ClassLoader]
+  [^Path p ^Map m ^ClassLoader c]
+  (u/since 13
+    (FileSystems/newFileSystem p m c)))
 
 
 (u/defn-wn file-system
@@ -313,25 +341,27 @@
                 uri -file-system}
    :arglists '([]
                [nil] [fs] [path] [uri]
-               [uri env] [path class-loader]
-               [uri env classloader])
+               [uri env]
+               [uri env classloader]
+               [path class-loader]
+               [path env]
+               [path env classloader])
    :tag FileSystem}
   ([]
    (FileSystems/getDefault))
   ([something]
    (-file-system something))
-  ([uri-or-path env-or-classloader]
-   (if (isa? (type env-or-classloader) ClassLoader)
-     (-new-file-system (path uri-or-path) env-or-classloader)
-     (-new-file-system (uri uri-or-path) env-or-classloader)))
-  ([uri env classloader]
-   (FileSystems/newFileSystem (uri uri) env classloader)))
+  ([x & xs]
+   (if (uri? x)
+     (apply -new-file-system x xs)
+     (apply -new-file-system (path x) xs))))
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; FileTime
 ;;----------------------------------------------------------------------------------------------------------------------
 (defprotocol FileTimeBuilder
   (-to-file-time [this]))
+
 
 (extend-protocol FileTimeBuilder
   Long
@@ -352,6 +382,7 @@
 
 (def-u-coercion file-time* FileTime -to-file-time)
 
+
 (u/defn-wn file-time
   "Coerce the value `x` into the type: class java.nio.file.attribute.FileTime
   If called with no argument returns `(file-time (Date.))`"
@@ -367,11 +398,15 @@
 (defprotocol FileStoreBuilder
   (-to-file-store [this]))
 
+
 (extend-protocol FileStoreBuilder
   FileStore
   (-to-file-store [this] this))
 
+
 (def-u-coercion file-store FileStore -to-file-store)
+
+
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Keyword coercion helpers
 ;;----------------------------------------------------------------------------------------------------------------------
@@ -545,8 +580,8 @@
    `(make-array-cstr ~n ~t nil))
   ([n t coercion]
    (let [tag (type (make-array (resolve t) 0))
-         docstring (cond->(format "Contruct a java array whose elements are of type: %s" t)
-                          coercion (str (format "\nElements are coerced automatically with: %s" coercion)))
+         docstring (cond-> (format "Construct a java array whose elements are of type: %s" t)
+                           coercion (str (format "\nElements are coerced automatically with: %s" coercion)))
          seq-sym (gensym "seq_param__")]
      `(defn ~n
         ~docstring
