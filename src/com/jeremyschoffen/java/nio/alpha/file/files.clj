@@ -1,7 +1,7 @@
-(ns com.jeremyschoffen.java.nio.file.files
+(ns com.jeremyschoffen.java.nio.alpha.file.files
   (:refer-clojure :exclude [list find])
   (:require
-    [com.jeremyschoffen.java.nio.internal :as i])
+    [com.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     (java.io InputStream OutputStream BufferedReader BufferedWriter)
     (java.nio.channels SeekableByteChannel)

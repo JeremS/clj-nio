@@ -1,5 +1,5 @@
-(ns com.jeremyschoffen.java.nio.file.file-stores
-  (:require [com.jeremyschoffen.java.nio.internal :as i])
+(ns com.jeremyschoffen.java.nio.alpha.file.file-stores
+  (:require [com.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     (java.nio.file.attribute FileStoreAttributeView)))
 

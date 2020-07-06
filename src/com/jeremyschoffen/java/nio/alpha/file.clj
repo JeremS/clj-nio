@@ -1,12 +1,12 @@
-(ns com.jeremyschoffen.java.nio.file
+(ns com.jeremyschoffen.java.nio.alpha.file
   (:refer-clojure :exclude [resolve find list])
   (:require
-    [com.jeremyschoffen.java.nio.internal :as i]
-    [com.jeremyschoffen.java.nio.file.paths :as paths]
-    [com.jeremyschoffen.java.nio.file.files :as files]
-    [com.jeremyschoffen.java.nio.file.file-systems :as fs]
-    [com.jeremyschoffen.java.nio.file.file-stores :as file-stores]
-    [com.jeremyschoffen.java.nio.file.attribute.posix-file-permissions :as posix-perms]
+    [com.jeremyschoffen.java.nio.alpha.internal :as i]
+    [com.jeremyschoffen.java.nio.alpha.file.paths :as paths]
+    [com.jeremyschoffen.java.nio.alpha.file.files :as files]
+    [com.jeremyschoffen.java.nio.alpha.file.file-systems :as fs]
+    [com.jeremyschoffen.java.nio.alpha.file.file-stores :as file-stores]
+    [com.jeremyschoffen.java.nio.alpha.file.attribute.posix-file-permissions :as posix-perms]
     [clojure.java.io :as io]
     [clojure.edn :as edn])
   (:import

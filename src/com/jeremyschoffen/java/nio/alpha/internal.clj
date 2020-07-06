@@ -1,9 +1,9 @@
-(ns com.jeremyschoffen.java.nio.internal
+(ns com.jeremyschoffen.java.nio.alpha.internal
   (:require
-    [com.jeremyschoffen.java.nio.internal.potemkin.namespaces :as n]
-    [com.jeremyschoffen.java.nio.internal.utils :as u]
-    [com.jeremyschoffen.java.nio.internal.coercions :as coerce]
-    [com.jeremyschoffen.java.nio.internal.def-helpers :as h])
+    [com.jeremyschoffen.java.nio.alpha.internal.potemkin.namespaces :as n]
+    [com.jeremyschoffen.java.nio.alpha.internal.utils :as u]
+    [com.jeremyschoffen.java.nio.alpha.internal.coercions :as coerce]
+    [com.jeremyschoffen.java.nio.alpha.internal.def-helpers :as h])
   (:import (java.util.stream Stream)
            (java.lang AutoCloseable)
            (java.nio.file DirectoryStream)))

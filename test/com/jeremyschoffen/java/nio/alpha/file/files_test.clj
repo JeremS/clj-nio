@@ -1,12 +1,12 @@
-(ns com.jeremyschoffen.java.nio.file.files-test
+(ns com.jeremyschoffen.java.nio.alpha.file.files-test
   (:refer-clojure :exclude [find list])
   (:require
     [clojure.test :refer [deftest testing]]
     [testit.core :refer :all]
-    [com.jeremyschoffen.java.nio.file.paths :as paths :refer [path]]
-    [com.jeremyschoffen.java.nio.file.files :as files]
-    [com.jeremyschoffen.java.nio.file.file-systems :as fs]
-    [com.jeremyschoffen.java.nio.internal :as i])
+    [com.jeremyschoffen.java.nio.alpha.file.paths :as paths :refer [path]]
+    [com.jeremyschoffen.java.nio.alpha.file.files :as files]
+    [com.jeremyschoffen.java.nio.alpha.file.file-systems :as fs]
+    [com.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     (java.io ByteArrayInputStream)))
 

@@ -1,8 +1,8 @@
-(ns com.jeremyschoffen.java.nio.internal.def-helpers
+(ns com.jeremyschoffen.java.nio.alpha.internal.def-helpers
   (:require
     [clojure.spec.alpha :as s]
-    [com.jeremyschoffen.java.nio.internal.coercions :as coerce]
-    [com.jeremyschoffen.java.nio.internal.utils :as u]))
+    [com.jeremyschoffen.java.nio.alpha.internal.coercions :as coerce]
+    [com.jeremyschoffen.java.nio.alpha.internal.utils :as u]))
 
 
 ;;----------------------------------------------------------------------------------------------------------------------

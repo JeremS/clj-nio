@@ -1,7 +1,7 @@
-(ns com.jeremyschoffen.java.nio.file.paths
+(ns com.jeremyschoffen.java.nio.alpha.file.paths
   (:refer-clojure :exclude [resolve name])
   (:require
-    [com.jeremyschoffen.java.nio.internal :as i])
+    [com.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     [java.nio.file FileSystem Path WatchKey]))
 

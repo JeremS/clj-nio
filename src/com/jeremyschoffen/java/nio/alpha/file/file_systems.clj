@@ -1,6 +1,6 @@
-(ns com.jeremyschoffen.java.nio.file.file-systems
+(ns com.jeremyschoffen.java.nio.alpha.file.file-systems
   (:require
-    [com.jeremyschoffen.java.nio.internal :as i])
+    [com.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     (java.nio.file WatchService FileStore PathMatcher Path)
     (java.nio.file.attribute UserPrincipalLookupService)

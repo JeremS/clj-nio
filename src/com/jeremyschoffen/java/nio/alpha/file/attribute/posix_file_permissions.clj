@@ -1,6 +1,6 @@
-(ns com.jeremyschoffen.java.nio.file.attribute.posix-file-permissions
+(ns com.jeremyschoffen.java.nio.alpha.file.attribute.posix-file-permissions
   (:require
-    [com.jeremyschoffen.java.nio.internal :as i])
+    [com.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     (java.nio.file.attribute FileAttribute PosixFilePermissions)))
 
