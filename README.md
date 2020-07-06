@@ -4,5 +4,5 @@ to suit my needs and style preferences...
 
 ## Mentions
 Thanks to:
-- [nio.file](https://github.com/ToBeReplaced/nio.file) from which I have take a lot of code.
+- [nio.file](https://github.com/ToBeReplaced/nio.file) from which I have taken a lot of code.
 - [potemkin](https://github.com/ztellman/potemkin) from which I picked the namespace importing logic.
