@@ -21,6 +21,7 @@
 
 
 (comment
-  (mbt-defaults/bump-tag!)
-  (mbt-defaults/install!)
+  (mbt-defaults/bump-tag! conf)
+  (mbt-defaults/build-jar! conf)
+  (mbt-defaults/install! conf)
   (mbt-core/clean! conf))
