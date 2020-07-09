@@ -23,11 +23,6 @@
 
 (comment
   (mbt-defaults/bump-tag! conf)
-
   (mbt-defaults/build-jar! conf)
-
-  (-> conf
-      (assoc :maven.install/dir (u/safer-path "target" "local"))
-      mbt-defaults/install!)
-
+  (mbt-defaults/install! conf)
   (mbt-core/clean! conf))
