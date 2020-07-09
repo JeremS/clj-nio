@@ -2,7 +2,12 @@
 
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}}
 
- :aliases {:dev {:extra-paths ["dev"]}
+ :aliases
+ {:build {:extra-paths ["bin"]
+          :extra-deps {mbt {:local/root "../mbt"}}}
 
-           :test {:extra-paths ["test"]
-                  :extra-deps {metosin/testit {:mvn/version "0.4.0"}}}}}
+  :dev {:extra-paths ["dev"]}
+
+  :test {:extra-paths ["test"]
+         :extra-deps {metosin/testit {:mvn/version "0.4.0"}
+                      lambdaisland/kaocha {:mvn/version "0.0-541"}}}}}
