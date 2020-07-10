@@ -23,7 +23,7 @@
   "Returns the name of the file or directory denoted by the path."
   Path .getFileName)
 
-;; TODO: Passing just a uri doesn't work
+
 (i/defn-wn file-system
   "Returns the FileSystem located at the URI, the FileSystem used to
   create the Path, or the default FileSystem when called with no
