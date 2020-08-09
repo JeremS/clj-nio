@@ -1,4 +1,4 @@
-(ns com.jeremyschoffen.java.nio.alpha.internal.utils
+(ns fr.jeremyschoffen.java.nio.alpha.internal.utils
   (:require
     [clojure.spec.alpha :as s]
     [clojure.pprint :as pp])

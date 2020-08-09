@@ -1,12 +1,12 @@
-(ns com.jeremyschoffen.java.nio.alpha.file.files-test
+(ns fr.jeremyschoffen.java.nio.alpha.file.files-test
   (:refer-clojure :exclude [find list])
   (:require
     [clojure.test :refer [deftest testing]]
     [testit.core :refer :all]
-    [com.jeremyschoffen.java.nio.alpha.file.paths :as paths :refer [path]]
-    [com.jeremyschoffen.java.nio.alpha.file.files :as files]
-    [com.jeremyschoffen.java.nio.alpha.file.file-systems :as fs]
-    [com.jeremyschoffen.java.nio.alpha.internal :as i])
+    [fr.jeremyschoffen.java.nio.alpha.file.paths :as paths :refer [path]]
+    [fr.jeremyschoffen.java.nio.alpha.file.files :as files]
+    [fr.jeremyschoffen.java.nio.alpha.file.file-systems :as fs]
+    [fr.jeremyschoffen.java.nio.alpha.internal :as i])
   (:import
     (java.io ByteArrayInputStream)))
 
@@ -306,7 +306,7 @@
     (files/write-bytes temp-file (.getBytes some-text))
     (fact (slurp temp-file) => some-text)))
 
-(clojure.test/run-tests)
+;(clojure.test/run-tests)
 
 ;(clojure.repl/doc files/create-directory!)
 ;(clojure.repl/doc files/set-posix-file-permissions!)

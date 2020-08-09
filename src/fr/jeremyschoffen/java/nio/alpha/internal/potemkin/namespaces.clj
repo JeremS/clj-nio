@@ -1,6 +1,6 @@
 ;; Copied from potemkin, v0.4.5 (https://github.com/ztellman/potemkin), MIT licnensed, Copyright Zachary Tellman
 
-(ns com.jeremyschoffen.java.nio.alpha.internal.potemkin.namespaces)
+(ns fr.jeremyschoffen.java.nio.alpha.internal.potemkin.namespaces)
 
 
 (defn link-vars

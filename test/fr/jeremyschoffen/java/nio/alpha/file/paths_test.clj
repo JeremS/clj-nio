@@ -1,9 +1,9 @@
-(ns com.jeremyschoffen.java.nio.alpha.file.paths-test
+(ns fr.jeremyschoffen.java.nio.alpha.file.paths-test
   (:refer-clojure :exclude [resolve name])
   (:require
     [clojure.test :refer [deftest testing]]
     [testit.core :refer :all]
-    [com.jeremyschoffen.java.nio.alpha.file.paths :as paths :refer [path]])
+    [fr.jeremyschoffen.java.nio.alpha.file.paths :as paths :refer [path]])
   (:import
     (java.nio.file FileSystems)))
 

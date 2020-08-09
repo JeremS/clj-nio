@@ -1,8 +1,8 @@
-(ns com.jeremyschoffen.java.nio.alpha.internal.coercions
+(ns fr.jeremyschoffen.java.nio.alpha.internal.coercions
   (:require
     [clojure.spec.alpha :as s]
     [clojure.java.io :as io]
-    [com.jeremyschoffen.java.nio.alpha.internal.utils :as u])
+    [fr.jeremyschoffen.java.nio.alpha.internal.utils :as u])
   (:import
     (clojure.lang Sequential Keyword)
     (java.io File InputStream OutputStream)
