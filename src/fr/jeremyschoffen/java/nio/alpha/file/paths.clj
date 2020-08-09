@@ -5,8 +5,8 @@
   (:import
     [java.nio.file FileSystem Path WatchKey]))
 
-(i/alias-fn path i/path)
-(i/alias-fn uri i/uri)
+(i/def-clone path i/path)
+(i/def-clone uri i/uri)
 
 
 (i/def-binary-path-fn compare-to

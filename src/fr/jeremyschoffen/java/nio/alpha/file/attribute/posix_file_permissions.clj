@@ -5,7 +5,7 @@
     (java.nio.file.attribute FileAttribute PosixFilePermissions)))
 
 
-(i/alias-fn posix-file-permissions i/posix-file-permissions)
+(i/def-clone posix-file-permissions i/posix-file-permissions)
 
 
 (i/defn-wn as-file-attribute

@@ -8,7 +8,7 @@
     (java.util Set)))
 
 
-(i/alias-fn file-system i/file-system)
+(i/def-clone file-system i/file-system)
 
 
 (i/def-fs-fn file-stores
