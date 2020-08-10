@@ -1,7 +1,6 @@
 (ns build
   (:require
     [clojure.spec.test.alpha :as spec-test]
-    [fr.jeremyschoffen.java.nio.alpha.file :as fs]
     [fr.jeremyschoffen.mbt.alpha.core :as mbt-core]
     [fr.jeremyschoffen.mbt.alpha.default :as mbt-defaults]
     [fr.jeremyschoffen.mbt.alpha.utils :as u]))
