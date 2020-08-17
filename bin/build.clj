@@ -14,7 +14,12 @@
     :project/author "Jeremy Schoffen"
     :maven/group-id 'fr.jeremyschoffen
     :versioning/scheme mbt-defaults/simple-scheme
-    :versioning/major :alpha))
+    :versioning/major :alpha
+
+    :project/licenses [{:project.licence/name "Eclipse Public License - v 2.0"
+                        :project.licence/url "https://www.eclipse.org/legal/epl-v20.html"
+                        :project.licence/distribution :repo
+                        :project.license/file (u/safer-path "LICENSE")}]))
 
 
 (def conf (-> specific-conf
