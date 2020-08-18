@@ -4,8 +4,7 @@
 
  :aliases
  {:build {:extra-paths ["bin"]
-          :extra-deps {fr.jeremyschoffen/mbt-alpha {:local/root "../mbt"}}}
-                       ;fr.jeremyschoffen/mbt-alpha {:mvn/version "0"}}}
+          :extra-deps {fr.jeremyschoffen/mbt-alpha-unstable {:mvn/version "2"}}}
 
   :dev {:extra-paths ["dev"]}
 
