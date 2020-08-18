@@ -13,18 +13,17 @@
   (sorted-map
     :project/author "Jeremy Schoffen"
     :maven/group-id 'fr.jeremyschoffen
-    :versioning/scheme mbt-defaults/simple-scheme
+    :versioning/scheme mbt-defaults/git-distance-scheme
     :versioning/major :alpha
 
-    :project/licenses [{:project.licence/name "Eclipse Public License - v 2.0"
-                        :project.licence/url "https://www.eclipse.org/legal/epl-v20.html"
-                        :project.licence/distribution :repo
+    :project/licenses [{:project.license/name "Eclipse Public License - v 2.0"
+                        :project.license/url "https://www.eclipse.org/legal/epl-v20.html"
+                        :project.license/distribution :repo
                         :project.license/file (u/safer-path "LICENSE")}]))
 
 
 (def conf (-> specific-conf
               mbt-defaults/make-conf))
-
 
 
 (comment
