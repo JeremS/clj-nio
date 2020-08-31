@@ -4,7 +4,7 @@
         fr.jeremyschoffen/dolly {:mvn/version "0"}}
 
  :aliases
- {:build {:extra-paths ["bin" "src/doc"]
+ {:build {:extra-paths ["src/build" "src/doc"]
           :extra-deps {fr.jeremyschoffen/textp-doc-alpha {:mvn/version "0"}
                        fr.jeremyschoffen/mbt-alpha {:mvn/version "0"
                                                     :exclusions [fr.jeremyschoffen/clj-nio-alpha]}}}

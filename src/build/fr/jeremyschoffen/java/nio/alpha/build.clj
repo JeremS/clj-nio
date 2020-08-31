@@ -1,4 +1,4 @@
-(ns build
+(ns fr.jeremyschoffen.java.nio.alpha.build
   (:require
     [clojure.spec.test.alpha :as st]
     [fr.jeremyschoffen.mbt.alpha.core :as mbt-core]
@@ -19,7 +19,7 @@
                  mbt-defaults/maven-install!])
 
 
-(def conf (mbt-defaults/config-make
+(def conf (mbt-defaults/config
             {::project/author "Jeremy Schoffen"
              ::maven/group-id 'fr.jeremyschoffen
              ::versioning/scheme mbt-defaults/git-distance-scheme
