@@ -49,7 +49,7 @@
 
 (defn dir-stream-filter [f]
   {:tag DirectoryStream$Filter}
-  "Makes a DirectoryStreamFileter from a clojure fn."
+  "Makes a DirectoryStreamFilter from a clojure fn."
   (reify DirectoryStream$Filter
     (accept [_ entry]
       (f entry))))
@@ -64,7 +64,17 @@
                                     :opts (s/? map?)))
 
 
-(defmacro ^:private def-u-coercion [& args]
+(defmacro ^:private def-u-coercion
+  "Define a coercion function that's type hinted.
+
+  args:
+  - `name`: the name of the coercion
+  - `tag`: the type hint symbol
+  - `coerce-fn`: the actual coercion function
+  - `opts`: options, right now just `:coercions/keywords` a map from keyword to values used in meta-data.
+  "
+  {:arglists '([name tag coerce-fn opts])}
+  [& args]
   (let [{:keys [name tag coerce-fn]
          kws->v :coercions/keywords} (u/parse-params ::def-u-coercion-args args)
         docstring (format "Coerce the value `x` into the type: %s." (resolve tag))
@@ -83,23 +93,34 @@
       IllegalArgumentException.
       throw))
 
-(defn try-coerce [coerce & args]
+
+(defn try-coerce
+  "Try to coerce `args` with the fn `coerce`. Returns nil if the coercion throws."
+  [coerce & args]
   (try
     (apply coerce args)
     (catch Exception _ nil)))
 
 
-(defn coerce [v coercion]
+(defn coerce
+  "Try to coerce `v` with `coercion`. Three cases:
+  - `coercion` is a class and (instance `coercion` `v`) -> return v
+  - try apply `coercion` to `v` and return the result
+  - in any case if the coercion doesn't work return nil"
+  [v coercion]
   (if (class? coercion)
-    (when (isa? (type v) coercion)
+    (when (instance? coercion v)
       v)
     (try-coerce coercion v)))
 
 
-(defn some-coercion [v & coercions]
+(defn some-coercion
+  "Try to coerce `v` with `coercions` in order until one works. If non work return nil."
+  [v & coercions]
   (some (fn [coercion]
           (coerce v coercion))
         coercions))
+
 
 (defn- flatten-even-sets [x]
   (let [node? (some-fn sequential? set?)]
@@ -107,7 +128,9 @@
             (rest (tree-seq node? seq x)))))
 
 
-(defn coerce-many [coercion coll]
+(defn coerce-many
+  "Map `coercion` to a flatten `coll`"
+  [coercion coll]
   (into #{} (map coercion) (flatten-even-sets coll)))
 
 
@@ -152,13 +175,14 @@
 
   FileSystem
   (-to-u-path [this]
-    (.getPath this "/" (into-array String nil)))
+    (.getPath this "/" (make-array String 0)))
 
   Sequential
   (-to-u-path [this]
-    (assert (every? (some-fn string? path?) this)
-            (str "Sequence of paths to path takes only strings and paths, had:\n" this))
-    (let [sanitized (into [] (comp (map -to-u-path) (map str)) this)]
+    (let [sanitized (into []
+                          (comp (map -to-u-path)
+                                (map str))
+                          this)]
       (apply path sanitized))))
 
 
@@ -173,12 +197,12 @@
 
   String
   (-to-n-path [this more]
-    (assert (every? string? more))
-    (Paths/get this (into-array String more)))
+    (let [p-more (-to-u-path more)]
+      (Paths/get this (into-array String [(str p-more)]))))
 
   FileSystem
   (-to-n-path [this more]
-    (let [[s & r] (map str  (apply path more))]
+    (let [[s & r] (map str  (path more))]
       (if s
         (.getPath this s (into-array String r))
         (.getPath this "/" (into-array String nil))))))
@@ -422,6 +446,16 @@
         (throw-keyword-not-found type kw))))
 
 
+(defn- rework-coercion-table [kw->c]
+  (reduce-kv (fn [acc k v]
+               (-> acc
+                   (assoc k v)
+                   (cond-> (namespace k)
+                           (assoc (-> k name keyword) v))))
+             (sorted-map)
+             kw->c))
+
+
 (defmacro def-kw-coercion [coercion-name result-type coercion-table]
   (let [protocol-name (-> result-type
                           name
@@ -431,7 +465,8 @@
                               name
                               (str "-to-")
                               symbol)
-        kw->type-name (symbol (str "kw->" coercion-name))]
+        kw->type-name (symbol (str "kw->" coercion-name))
+        coercion-table (rework-coercion-table coercion-table)]
     `(do
        (def ~kw->type-name
          (make-kw->something-coercion ~result-type ~coercion-table))
@@ -458,15 +493,15 @@
 ;; Posix Permissions
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion posix-file-permission PosixFilePermission
-  {:owner-read    PosixFilePermission/OWNER_READ
-   :owner-write   PosixFilePermission/OWNER_WRITE
-   :owner-execute PosixFilePermission/OWNER_EXECUTE
-   :group-read    PosixFilePermission/GROUP_READ
-   :group-write   PosixFilePermission/GROUP_WRITE
-   :group-execute PosixFilePermission/GROUP_EXECUTE
-   :other-read    PosixFilePermission/OTHERS_READ
-   :other-write   PosixFilePermission/OTHERS_WRITE
-   :other-execute PosixFilePermission/OTHERS_EXECUTE})
+  {:posix-file-permission/owner-read    PosixFilePermission/OWNER_READ
+   :posix-file-permission/owner-write   PosixFilePermission/OWNER_WRITE
+   :posix-file-permission/owner-execute PosixFilePermission/OWNER_EXECUTE
+   :posix-file-permission/group-read    PosixFilePermission/GROUP_READ
+   :posix-file-permission/group-write   PosixFilePermission/GROUP_WRITE
+   :posix-file-permission/group-execute PosixFilePermission/GROUP_EXECUTE
+   :posix-file-permission/other-read    PosixFilePermission/OTHERS_READ
+   :posix-file-permission/other-write   PosixFilePermission/OTHERS_WRITE
+   :posix-file-permission/other-execute PosixFilePermission/OTHERS_EXECUTE})
 
 
 (u/defn-wn posix-file-permissions
@@ -485,43 +520,43 @@
 ;; Watch event
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion watch-event-kind WatchEvent$Kind
-  {:entry-create StandardWatchEventKinds/ENTRY_CREATE
-    :entry-delete StandardWatchEventKinds/ENTRY_DELETE
-    :entry-modify StandardWatchEventKinds/ENTRY_MODIFY})
+  {:watch-event-kind/entry-create StandardWatchEventKinds/ENTRY_CREATE
+   :watch-event-kind/entry-delete StandardWatchEventKinds/ENTRY_DELETE
+   :watch-event-kind/entry-modify StandardWatchEventKinds/ENTRY_MODIFY})
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Charset
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion charset Charset
-  {:iso-8859-1 StandardCharsets/ISO_8859_1,
-   :us-ascii StandardCharsets/US_ASCII,
-   :utf-8 StandardCharsets/UTF_8,
-   :utf-16 StandardCharsets/UTF_16,
-   :utf-16be StandardCharsets/UTF_16BE,
-   :utf-16le StandardCharsets/UTF_16LE})
+  {:charset/iso-8859-1 StandardCharsets/ISO_8859_1,
+   :charset/us-ascii StandardCharsets/US_ASCII,
+   :charset/utf-8 StandardCharsets/UTF_8,
+   :charset/utf-16 StandardCharsets/UTF_16,
+   :charset/utf-16be StandardCharsets/UTF_16BE,
+   :charset/utf-16le StandardCharsets/UTF_16LE})
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Copy opts
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion copy-option CopyOption
-  {:replace-existing StandardCopyOption/REPLACE_EXISTING,
-   :copy-attributes StandardCopyOption/COPY_ATTRIBUTES,
-   :atomic-move StandardCopyOption/ATOMIC_MOVE})
+  {:copy-option/replace-existing StandardCopyOption/REPLACE_EXISTING,
+   :copy-option/copy-attributes StandardCopyOption/COPY_ATTRIBUTES,
+   :copy-option/atomic-move StandardCopyOption/ATOMIC_MOVE})
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; Open opts
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion open-option OpenOption
-  {:read StandardOpenOption/READ,
-   :create StandardOpenOption/CREATE,
-   :append StandardOpenOption/APPEND,
-   :create-new StandardOpenOption/CREATE_NEW,
-   :sync StandardOpenOption/SYNC,
-   :write StandardOpenOption/WRITE,
-   :dsync StandardOpenOption/DSYNC,
-   :truncate-existing StandardOpenOption/TRUNCATE_EXISTING,
-   :sparse StandardOpenOption/SPARSE,
-   :delete-on-close StandardOpenOption/DELETE_ON_CLOSE})
+  {:open-option/read StandardOpenOption/READ,
+   :open-option/create StandardOpenOption/CREATE,
+   :open-option/append StandardOpenOption/APPEND,
+   :open-option/create-new StandardOpenOption/CREATE_NEW,
+   :open-option/sync StandardOpenOption/SYNC,
+   :open-option/write StandardOpenOption/WRITE,
+   :open-option/dsync StandardOpenOption/DSYNC,
+   :open-option/truncate-existing StandardOpenOption/TRUNCATE_EXISTING,
+   :open-option/sparse StandardOpenOption/SPARSE,
+   :open-option/delete-on-close StandardOpenOption/DELETE_ON_CLOSE})
 
 
 (u/defn-wn open-options
@@ -539,14 +574,14 @@
 ;; Link opts
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion link-option LinkOption
-  {:nofollow-links LinkOption/NOFOLLOW_LINKS})
+  {:link-option/nofollow-links LinkOption/NOFOLLOW_LINKS})
 
 
 ;;----------------------------------------------------------------------------------------------------------------------
 ;; File Visit opts
 ;;----------------------------------------------------------------------------------------------------------------------
 (def-kw-coercion file-visit-option FileVisitOption
-  {:follow_links FileVisitOption/FOLLOW_LINKS})
+  {:file-visit-option/follow_links FileVisitOption/FOLLOW_LINKS})
 
 
 (u/defn-wn file-visit-options

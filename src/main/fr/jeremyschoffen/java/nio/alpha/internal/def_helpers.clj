@@ -47,7 +47,7 @@
 
 
 (defn- process-arity
-  "Generate the vectors of symbols used to make gensym-ed param decls and potentialy coerced
+  "Generate the vectors of symbols used to make gensym-ed param declarations and potentially coerced
   use of those params."
   [ctxt arity]
   (let [{:keys [this-sym syms this-coercion coercions]} ctxt
@@ -58,16 +58,14 @@
                                                [(list this-coercion this-sym)]
                                                [this-sym])
                                              []))]
+    (doseq [param-name arity]
+      (let [sym (get syms param-name)]
+        (vswap! constructed-param-names conj sym)
+        (when-not (= sym '&)
+          (if-let [coercion (get coercions param-name)]
+            (vswap! constructed-param-usage conj (list coercion sym))
+            (vswap! constructed-param-usage conj sym)))))
 
-    (reduce (fn [_ param-name]
-              (let [sym (get syms param-name)]
-                (vswap! constructed-param-names conj sym)
-                (when-not (= sym '&)
-                  (if-let [coercion (get coercions param-name)]
-                    (vswap! constructed-param-usage conj (list coercion sym))
-                    (vswap! constructed-param-usage conj sym)))))
-            nil
-            arity)
     [@constructed-param-names @constructed-param-usage]))
 
 

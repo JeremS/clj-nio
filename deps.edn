@@ -1,11 +1,14 @@
 {:paths ["src/main"]
 
- :deps {org.clojure/clojure {:mvn/version "1.10.1"}}
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        fr.jeremyschoffen/dolly {:mvn/version "0"}}
 
  :aliases
  {:build {:extra-paths ["bin" "doc"]
           :extra-deps {fr.jeremyschoffen/mbt-alpha {:mvn/version "0"
                                                     :exclusions [fr.jeremyschoffen/clj-nio-alpha]}}}
+
+  :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "0.8.0"}}}
 
   :dev {:extra-paths ["dev"]}
 
