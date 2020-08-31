@@ -1,6 +1,5 @@
 (ns fr.jeremyschoffen.java.nio.alpha.internal
   (:require
-    ;[fr.jeremyschoffen.java.nio.alpha.internal.potemkin.namespaces :as n]
     [fr.jeremyschoffen.java.nio.alpha.internal.dolly :as dolly]
     [fr.jeremyschoffen.java.nio.alpha.internal.utils :as u]
     [fr.jeremyschoffen.java.nio.alpha.internal.coercions :as coerce]
