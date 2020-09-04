@@ -88,7 +88,7 @@
                             {"param" param
                              "coercion" coercion}))
                      coercions-map)]
-      (str "Coercion(s) table:"
+      (str "Coercion(s) table:\n"
            (pprint-md-table ["param" "coercion"] rows)))))
 
 
