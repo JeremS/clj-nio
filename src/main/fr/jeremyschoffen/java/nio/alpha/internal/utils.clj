@@ -66,6 +66,16 @@
         cs))
 
 
+(defn pprint-md-table [column-name rows]
+  (-> (pp/print-table column-name rows)
+      with-out-str
+      clojure.string/split-lines
+      vec
+      (update 2 clojure.string/replace #"\+" "|")
+      (->> (clojure.string/join "\n"))))
+
+
+
 (defn- make-coercion-notice [metadata-map]
   (when-let [coercions-map (:coercions metadata-map)]
     (let [coercions-map (fully-qualify-coercions coercions-map)
@@ -79,8 +89,7 @@
                              "coercion" coercion}))
                      coercions-map)]
       (str "Coercion(s) table:"
-           (with-out-str
-             (pp/print-table ["param" "coercion"] rows))))))
+           (pprint-md-table ["param" "coercion"] rows)))))
 
 
 (defn- make-close-warning-notice [metadata-map]
@@ -93,8 +102,7 @@
     (let [rows (map (fn [[k v]] {"Keyword" k "Enum val" v})
                     kws)]
       (str "Accepted keywords:\n"
-           (with-out-str
-             (pp/print-table ["Keyword" "Enum val"] rows))))))
+           (pprint-md-table ["Keyword" "Enum val"] rows)))))
 
 
 (def ^:private notice-makers
