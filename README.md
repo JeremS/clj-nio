@@ -8,11 +8,11 @@ to suit my needs and style preferences...
 ## Installation
 Deps coords:
 ```clojure
-#:fr.jeremyschoffen{clj-nio-alpha #:mvn{:version "3"}}
+#:fr.jeremyschoffen{clj-nio-alpha #:mvn{:version "5"}}
 ```
 Lein coords:
 ```clojure
-[fr.jeremyschoffen/clj-nio-alpha "3"]
+[fr.jeremyschoffen/clj-nio-alpha "5"]
 ```
 
 
