@@ -25,6 +25,7 @@
 
                ::maven/scm {::maven.scm/url "https://github.com/JeremS/clj-nio"}
 
+               ::maven/server mbt-defaults/clojars
                ::maven/credentials {::maven.credentials/user-name "jeremys"
                                     ::maven.credentials/password build/token}
 
