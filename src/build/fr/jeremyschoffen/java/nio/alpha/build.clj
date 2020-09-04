@@ -1,6 +1,5 @@
 (ns fr.jeremyschoffen.java.nio.alpha.build
   (:require
-    [clojure.spec.alpha :as s]
     [clojure.spec.test.alpha :as st]
     [fr.jeremyschoffen.mbt.alpha.core :as mbt-core]
     [fr.jeremyschoffen.mbt.alpha.default :as mbt-defaults]
@@ -12,6 +11,7 @@
 (u/pseudo-nss
   git
   maven
+  maven.credentials
   maven.scm
   project
   project.license
@@ -25,11 +25,13 @@
 
                ::maven/scm {::maven.scm/url "https://github.com/JeremS/clj-nio"}
 
+               ::maven/credentials {::maven.credentials/user-name "jeremys"
+                                    ::maven.credentials/password build/token}
+
                ::project/licenses [{::project.license/name "Eclipse Public License - v 2.0"
                                     ::project.license/url "https://www.eclipse.org/legal/epl-v20.html"
                                     ::project.license/distribution :repo
                                     ::project.license/file (u/safer-path "LICENSE")}]}
-              build/add-deploy-conf
               mbt-defaults/config))
 
 
@@ -72,10 +74,16 @@
                  mbt-defaults/build-jar!
                  mbt-defaults/maven-deploy!])
 
+(defn next-version [conf]
+  (let [next-v (mbt-defaults/versioning-next-version conf)]
+    (if (= next-v (mbt-defaults/versioning-initial-version conf))
+      next-v
+      (update next-v :number inc))))
+
 
 (defn release! []
   (-> conf
-      (u/assoc-computed ::versioning/version mbt-defaults/versioning-next-version+1
+      (u/assoc-computed ::versioning/version next-version
                         ::project/version mbt-defaults/versioning-project-version)
       (u/do-side-effect! new-milestone!)
       (u/assoc-computed ::maven/scm mbt-defaults/maven-make-github-scm)

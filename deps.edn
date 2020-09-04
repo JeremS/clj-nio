@@ -5,7 +5,7 @@
 
  :aliases
  {:build {:extra-paths ["src/build" "build"]
-          :extra-deps {fr.jeremyschoffen/textp-doc-alpha {:mvn/version "0"}
+          :extra-deps {fr.jeremyschoffen/textp-doc-alpha {:local/root "../textp/textp-doc"}
                        fr.jeremyschoffen/mbt-alpha {:mvn/version "0"
                                                     :exclusions [fr.jeremyschoffen/clj-nio-alpha]}}}
 

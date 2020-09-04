@@ -164,7 +164,7 @@
 
     (fact (compare (files/last-modified-time basic-file)
                    base-time)
-          => 0)))
+          => pos?)))
 
 
 (when on-posix

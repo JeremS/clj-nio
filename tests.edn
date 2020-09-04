@@ -1,6 +1,6 @@
 #kaocha/v1
     {:tests [{
               :id :unit-clj
-              :source-paths ["src"]
+              :source-paths ["src/main"]
               :test-paths ["test"]
               :ns-patterns ["-test$"]}]}
