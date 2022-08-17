@@ -5,8 +5,8 @@
  :aliases
  {:clj {:extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}}}
 
-  :build {:extra-paths ["src/build" "build"]
-          :extra-deps {io.github.jerems/mbt2 {:git/tag "v5", :git/sha "f5b65fe8cc"}}}
+  :build {:extra-paths ["src/build" "src/docs"]
+          :extra-deps {io.github.jerems/mbt2  {:git/tag "v14", :git/sha "022e26f5d1"}}}
 
   :dev {:extra-paths ["src/dev"]
         :extra-deps {nrepl/nrepl {:mvn/version "0.9.0"}}}

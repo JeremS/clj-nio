@@ -1,4 +1,4 @@
-◊(require '[fr.jeremyschoffen.textp.alpha.doc.tags :as tags])◊
+◊(require '[fr.jeremyschoffen.mbt2.prose.tags :as t])
 
 # clj-nio
 
@@ -6,8 +6,7 @@ A wrapper around the java.nio.file namespace. This is a rework of [nio.file](htt
 to suit my needs and style preferences...
 
 ## Installation
-◊tags/project-coords
-
+◊t/git-coordinates
 
 ## Mentions
 Thanks to:
