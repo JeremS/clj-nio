@@ -1,0 +1,3 @@
+{:tasks
+ {repl (clojure "-M:clj:dev:test:build -m nrepl.cmdline")
+  test-clj (clojure "-M:clj:test -m kaocha.runner unit-clj")}}

@@ -1,18 +1,16 @@
 {:paths ["src/main"]
 
- :deps {org.clojure/clojure {:mvn/version "1.10.1"}
-        fr.jeremyschoffen/dolly {:mvn/version "0"}}
+ :deps {io.github.jerems/dolly {:git/tag "v29", :git/sha "cfefa49133"}}
 
  :aliases
- {:build {:extra-paths ["src/build" "build"]
-          :extra-deps {fr.jeremyschoffen/textp-doc-alpha {:local/root "../textp/textp-doc"}
-                       fr.jeremyschoffen/mbt-alpha {:mvn/version "0"
-                                                    :exclusions [fr.jeremyschoffen/clj-nio-alpha]}}}
+ {:clj {:extra-deps {org.clojure/clojure {:mvn/version "1.11.1"}}}
 
-  :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "0.8.0"}}}
+  :build {:extra-paths ["src/build" "build"]
+          :extra-deps {io.github.jerems/mbt2 {:git/tag "v5", :git/sha "f5b65fe8cc"}}}
 
-  :dev {:extra-paths ["dev"]}
+  :dev {:extra-paths ["src/dev"]
+        :extra-deps {nrepl/nrepl {:mvn/version "0.9.0"}}}
 
-  :test {:extra-paths ["test"]
-         :extra-deps {metosin/testit {:mvn/version "0.4.0"}
-                      lambdaisland/kaocha {:mvn/version "0.0-541"}}}}}
+  :test {:extra-paths ["src/test"]
+         :extra-deps {metosin/testit {:mvn/version "0.4.1"}
+                      lambdaisland/kaocha {:mvn/version "1.69.1069"}}}}}

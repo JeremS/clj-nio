@@ -11,3 +11,4 @@ pom.xml.asc
 /.nrepl-history
 /.nrepl-port
 .nrepl.edn
+.clj-kondo

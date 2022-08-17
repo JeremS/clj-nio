@@ -2,5 +2,5 @@
     {:tests [{
               :id :unit-clj
               :source-paths ["src/main"]
-              :test-paths ["test"]
+              :test-paths ["src/test"]
               :ns-patterns ["-test$"]}]}
