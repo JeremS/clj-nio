@@ -16,17 +16,17 @@
   {:additional-params [type]})
 
 
-(i/def-file-store-fn total-space​
+(i/def-file-store-fn total-space
   "Returns the size, in bytes, of the file store."
   Long .getTotalSpace)
 
 
-(i/def-file-store-fn unallocated-space​
+(i/def-file-store-fn unallocated-space
   "Returns the number of unallocated bytes in the file store."
   Long .getUnallocatedSpace)
 
 
-(i/def-file-store-fn usable-space​
+(i/def-file-store-fn usable-space
   "Returns the number of bytes available to this Java virtual machine on the file store."
   Long .getUsableSpace)
 
