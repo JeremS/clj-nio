@@ -1,0 +1,1 @@
+{:config-paths ["../resources/clj-kondo.exports/fr.jeremyschoffen/clj-nio"]}

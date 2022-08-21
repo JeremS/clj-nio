@@ -1,0 +1,14 @@
+(ns clj-kondo.clj-nio.coercions
+  (:require
+    [clj-kondo.hooks-api :as api]))
+
+
+(defn def-coercion [{:keys [node]}]
+  (let [[_ coercion-name tag l :as s] (api/sexpr node)
+        res (api/list-node
+              [(api/token-node 'defn)
+               (api/token-node coercion-name)
+               (api/map-node [(api/token-node :tag) (api/token-node tag)])
+               (api/vector-node [(api/token-node '_)])
+               (api/token-node l)])]
+    {:node res}))

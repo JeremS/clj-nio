@@ -1,6 +1,7 @@
 (ns fr.jeremyschoffen.java.nio.alpha.internal.utils
   (:require
     [clojure.spec.alpha :as s]
+    [clojure.string]
     [clojure.pprint :as pp])
   (:import
     (java.lang AutoCloseable)))
@@ -15,7 +16,7 @@
 
 
 (defn parse-params
-  "Expects a spec like (cat :x x? :y y? :opts (? map?))"
+  "Expects a spec like (cat :x x? :y y? ... :opts (? map?)). Returns a the map (merge opts {:x x? :y y? ...})"
   [spec args]
   (let [conformed (conform-or-throw spec args)
         ctxt (dissoc conformed :opts)
@@ -75,7 +76,6 @@
       (->> (clojure.string/join "\n"))))
 
 
-
 (defn- make-coercion-notice [metadata-map]
   (when-let [coercions-map (:coercions metadata-map)]
     (let [coercions-map (fully-qualify-coercions coercions-map)
@@ -130,6 +130,7 @@
 (defn throw-unsuported [since]
   (throw (UnsupportedOperationException. (format "Not supported in java %s, appeared in java %s." java-version since))))
 
+
 (defn make-unsupported-operation [since]
   (fn [& _]
     (throw-unsuported since)))
@@ -138,7 +139,7 @@
 (defn change-to-unsupported-operation-if-necessary! [a-var]
   (let [metadata (meta a-var)]
     (when-let [since (:since metadata)]
-      (if (< java-major since)
+      (when (< java-major since)
         (alter-var-root a-var (constantly (make-unsupported-operation since)))))))
 
 

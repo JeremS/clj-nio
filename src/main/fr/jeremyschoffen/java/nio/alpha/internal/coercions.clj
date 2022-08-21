@@ -1,7 +1,8 @@
 (ns fr.jeremyschoffen.java.nio.alpha.internal.coercions
   (:require
-    [clojure.spec.alpha :as s]
     [clojure.java.io :as io]
+    [clojure.string]
+    [clojure.spec.alpha :as s]
     [fr.jeremyschoffen.java.nio.alpha.internal.utils :as u])
   (:import
     (clojure.lang Sequential Keyword)
