@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [find list])
   (:require
     [clojure.test :refer [deftest testing]]
-    [testit.core :refer :all]
+    [testit.core :refer [=> =throws=> fact facts]]
     [fr.jeremyschoffen.java.nio.alpha.file.paths :as paths :refer [path]]
     [fr.jeremyschoffen.java.nio.alpha.file.files :as files]
     [fr.jeremyschoffen.java.nio.alpha.file.file-systems :as fs]
