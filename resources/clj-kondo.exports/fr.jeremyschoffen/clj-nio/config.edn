@@ -15,6 +15,26 @@
                  clj-kondo.dolly/def-clone
 
                  fr.jeremyschoffen.java.nio.alpha.internal/def-java-call
-                 clj-kondo.clj-nio.internal/def-java-call}}}
+                 clj-kondo.clj-nio.internal/def-java-call
 
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-path-fn
+                 clj-kondo.clj-nio.internal/def-java-call
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-fs-fn
+                 clj-kondo.clj-nio.internal/def-java-call
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-file-store-fn
+                 clj-kondo.clj-nio.internal/def-java-call
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-binary-path-fn
+                 clj-kondo.clj-nio.internal/def-java-call
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-link-fn
+                 clj-kondo.clj-nio.internal/def-java-call
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-create-fn
+                 clj-kondo.clj-nio.internal/def-java-call
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-open-fn
+                 clj-kondo.clj-nio.internal/def-java-call}}}
 

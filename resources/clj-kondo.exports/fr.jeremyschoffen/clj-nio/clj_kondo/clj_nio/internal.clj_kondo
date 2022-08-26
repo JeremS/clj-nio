@@ -50,15 +50,18 @@
     (make-def-java-call-body parsed arity)))
 
 
+(defn def-java-call* [ctxt]
+  (api/list-node
+    (into [(api/token-node 'defn)
+           (api/token-node (:sym ctxt))
+           (api/map-node [(api/token-node :tag) (api/token-node (:tag ctxt))])]
+          (make-def-java-call-bodies ctxt))))
+
+
 (defn def-java-call [{:keys [node]}]
   (let [exp (api/sexpr node)
-        parsed (parse-def-java-call exp)
-        res (api/list-node
-              (into [(api/token-node 'defn)
-                     (api/token-node (:sym parsed))
-                     (api/map-node [(api/token-node :tag) (api/token-node (:tag parsed))])]
-                    (make-def-java-call-bodies parsed)))]
-    {:node res}))
+        parsed (parse-def-java-call exp)]
+    {:node (def-java-call* parsed)}))
 
 
 
