@@ -8,7 +8,6 @@
     [fr.jeremyschoffen.java.nio.alpha.file.file-stores :as file-stores]
     [fr.jeremyschoffen.java.nio.alpha.file.attribute.posix-file-permissions :as posix-perms])
   (:import
-    (java.io File)
     (java.nio.file Path)))
 
 
@@ -130,9 +129,9 @@
 (i/def-clone file-store-type file-stores/file-store-type)
 (i/def-clone file-store-read-only? file-stores/read-only?)
 (i/def-clone supports-file-attribute-view file-stores/supports-file-attribute-view)
-(i/def-clone total-space​ file-stores/total-space​)
-(i/def-clone unallocated-space​ file-stores/unallocated-space​)
-(i/def-clone usable-space​ file-stores/usable-space​)
+(i/def-clone total-space file-stores/total-space)
+(i/def-clone unallocated-space file-stores/unallocated-space)
+(i/def-clone usable-space file-stores/usable-space)
 
 
 ;;----------------------------------------------------------------------------------------------------------------------
@@ -173,33 +172,5 @@
     (if (< i 0)
       nil
       (.substring n (inc i)))))
-
-(comment
-  (do ;; look for duplicates
-    (require  '[clojure.edn :as edn])
-    (require  '[clojure.java.io :as io])
-
-    (defn make-reader []
-      (-> ["." ".." "clj-nio" "src" "com" "jeremyschoffen" "java" "nio"]
-          (path  "file.clj")
-          slurp
-          java.io.StringReader.
-          java.io.PushbackReader.))
-
-    (defn read-all []
-      (let [reader (make-reader)]
-        (take-while identity (repeatedly (fn [] (edn/read {:eof nil} reader))))))
-
-    (-> (read-all)
-        (->> (filter (fn [x] (-> x first (= 'i/def-clone))))
-             (group-by second)
-             (vals)
-             (filter (fn [x] (> (count x) 1)))))))
-
-
-
-
-
-
 
 
