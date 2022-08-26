@@ -11,6 +11,7 @@
 (def wd (-> "." paths/path paths/absolute-path))
 (def resources-dir "resources")
 (def example (path wd resources-dir))
+(def dumy (path wd "dumy"))
 (def relative-example (paths/relativize wd example))
 
 
@@ -76,7 +77,7 @@
 
 (deftest real-path
   (facts
-    (paths/real-path example) =throws=> Exception
+    (paths/real-path dumy) =throws=> Exception
     (paths/real-path wd) => truthy))
 
 
