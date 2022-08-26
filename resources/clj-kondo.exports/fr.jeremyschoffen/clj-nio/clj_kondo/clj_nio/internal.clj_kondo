@@ -1,0 +1,64 @@
+(ns clj-kondo.clj-nio.internal
+  (:require
+    [clj-kondo.hooks-api :as api]))
+
+
+(defn make-param-parser []
+  (fn [exp]
+    [(first exp) (rest exp)]))
+
+(defn make-optional-param-parser [t default]
+  (fn [exp]
+    (let [res (first exp)]
+      (if (t res)
+        [res (rest exp)]
+        [default exp]))))
+
+
+(def parse-sym (make-param-parser))
+(def parse-docstring (make-optional-param-parser string? ""))
+(def parse-attr-map (make-optional-param-parser map? {}))
+(def parse-tag (make-param-parser))
+(def parse-method (make-param-parser))
+(def parse-opts (make-param-parser))
+
+
+(defn parse-def-java-call [exp]
+  (let [[sym exp] (parse-sym (rest exp))
+        [docstring exp] (parse-docstring exp)
+        [attr-map exp] (parse-attr-map exp)
+        [tag exp] (parse-tag exp)
+        [method exp] (parse-method exp)
+        [opts _] (parse-opts exp)]
+    {:sym sym
+     :docstring docstring
+     :attr-map attr-map
+     :tag tag
+     :method method
+     :opts opts}))
+
+
+(defn make-def-java-call-body [{:keys [method]} arity]
+  (let [arity' (mapv api/token-node arity)]
+    (api/list-node
+      [(api/vector-node arity')
+       (api/list-node (into [(api/token-node method)] arity'))])))
+
+
+(defn make-def-java-call-bodies [{:keys [method opts] :as parsed}]
+  (for [arity (:arities opts)]
+    (make-def-java-call-body parsed arity)))
+
+
+(defn def-java-call [{:keys [node]}]
+  (let [exp (api/sexpr node)
+        parsed (parse-def-java-call exp)
+        res (api/list-node
+              (into [(api/token-node 'defn)
+                     (api/token-node (:sym parsed))
+                     (api/map-node [(api/token-node :tag) (api/token-node (:tag parsed))])]
+                    (make-def-java-call-bodies parsed)))]
+    {:node res}))
+
+
+

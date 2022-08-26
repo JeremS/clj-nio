@@ -2,7 +2,19 @@
  {fr.jeremyschoffen.java.nio.alpha.internal.utils/defn-wn clojure.core/defn
   fr.jeremyschoffen.java.nio.alpha.internal/defn-wn clojure.core/defn}
  :hooks
- {:analyze-call {fr.jeremyschoffen.java.nio.alpha.internal.coercions/def-u-coercion clj-kondo.clj-nio.coercions/def-coercion
-                 fr.jeremyschoffen.java.nio.alpha.internal.coercions/def-kw-coercion clj-kondo.clj-nio.coercions/def-coercion
-                 fr.jeremyschoffen.java.nio.alpha.internal.coercions/make-array-cstr clj-kondo.clj-nio.coercions/def-coercion
-                 fr.jeremyschoffen.java.nio.alpha.internal/def-clone clj-kondo.dolly/def-clone}}}
+ {:analyze-call {fr.jeremyschoffen.java.nio.alpha.internal.coercions/def-u-coercion
+                 clj-kondo.clj-nio.coercions/def-coercion
+
+                 fr.jeremyschoffen.java.nio.alpha.internal.coercions/def-kw-coercion
+                 clj-kondo.clj-nio.coercions/def-coercion
+
+                 fr.jeremyschoffen.java.nio.alpha.internal.coercions/make-array-cstr
+                 clj-kondo.clj-nio.coercions/def-coercion
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-clone
+                 clj-kondo.dolly/def-clone
+
+                 fr.jeremyschoffen.java.nio.alpha.internal/def-java-call
+                 clj-kondo.clj-nio.internal/def-java-call}}}
+
+

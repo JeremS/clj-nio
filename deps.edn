@@ -1,4 +1,4 @@
-{:paths ["src/main"]
+{:paths ["src/main" "resources"]
 
  :deps {io.github.jerems/dolly {:git/tag "v29", :git/sha "cfefa49133"}}
 
