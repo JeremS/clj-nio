@@ -14,7 +14,7 @@
 
 
 (defn generate-readme! []
-  (spit "README.md" (mbt/generate-md-doc "README.md.prose" {:lib-name lib-name})))
+  (spit "README.md"  (make-readme)))
 
 
 (defn generate-docs! []
