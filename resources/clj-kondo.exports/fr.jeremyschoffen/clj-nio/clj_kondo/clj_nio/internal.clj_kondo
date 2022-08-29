@@ -58,10 +58,10 @@
           (make-def-java-call-bodies ctxt))))
 
 
-(defn def-java-call [{:keys [node]}]
+(defn def-java-call [{:keys [node] :as p}]
   (let [exp (api/sexpr node)
         parsed (parse-def-java-call exp)]
-    {:node (def-java-call* parsed)}))
+    (assoc p :node (def-java-call* parsed))))
 
 
 
