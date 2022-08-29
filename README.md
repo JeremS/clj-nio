@@ -6,15 +6,9 @@ A wrapper around the java.nio.file namespace. This is a rework of [nio.file](htt
 to suit my needs and style preferences...
 
 ## Installation
-Deps coords:
 ```clojure
-#:fr.jeremyschoffen{clj-nio-alpha #:mvn{:version "7"}}
+{io.github.jerems/clj-nio {:git/tag "v70", :git/sha "2a9e1b4512"}}
 ```
-Lein coords:
-```clojure
-[fr.jeremyschoffen/clj-nio-alpha "7"]
-```
-
 
 ## Mentions
 Thanks to:
