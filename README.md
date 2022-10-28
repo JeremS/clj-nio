@@ -7,7 +7,7 @@ to suit my needs and style preferences...
 
 ## Installation
 ```clojure
-{io.github.jerems/clj-nio {:git/tag "v70", :git/sha "2a9e1b4512"}}
+{io.github.jerems/clj-nio {:git/tag "v72", :git/sha "f8d301953d"}}
 ```
 
 ## Mentions
