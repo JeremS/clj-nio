@@ -26,7 +26,7 @@
 
 (defn- major-number [version]
   (let [[major minor] (->> version
-                           (re-matches #"(\d+)\.(\d+)(?:\s|\S)*")
+                           (re-matches #"(\d+)(?:\.(\d+))?(?:\s|\S)*")
                            rest
                            (filter identity)
                            (map #(Integer/parseInt %)))]
